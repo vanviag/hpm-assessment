@@ -803,12 +803,12 @@ async function saveResult(record){
 }
 
 async function loadHRData(){
-  const{url,key}=getSBConfig();
+  const fnUrl=getFunctionsUrl();
   const sbStatus=document.getElementById('sb-status');
   const hrStatus=document.getElementById('hr-conn-status');
-  if(!url||!key){
-    if(sbStatus)sbStatus.textContent='Not configured — showing local data only.';
-    if(hrStatus){hrStatus.textContent='⚠ Database not configured. Please set SUPABASE_URL and SUPABASE_KEY at the top of the HTML file.';hrStatus.style.color='var(--amber)';}
+  if(!fnUrl){
+    if(sbStatus)sbStatus.textContent='Not configured.';
+    if(hrStatus){hrStatus.textContent='⚠ Functions URL not set.';hrStatus.style.color='var(--amber)';}
     renderHRDashboard(getLocalResults());
     return;
   }
@@ -1115,8 +1115,8 @@ function toggleAddCandidate(){
 
 async function generateNextCandidateId(){
   let nextNum = 1;
-  const {url, key} = getSBConfig();
-  if(url && key){
+  const fnUrl4=getFunctionsUrl();
+  if(fnUrl4){
     try{
       const resp = await callFunction('hr-api',{action:'list_candidates'});
       const rows = (resp.candidates||[]).slice(0,1);
@@ -1158,8 +1158,8 @@ async function addCandidate(){
   if(!name || !cid){ st.textContent = 'Please fill in both fields.'; return; }
   st.textContent = 'Saving...';
   const record = { candidate_id: cid, full_name: name, password: cid, status: 'pending', created_at: new Date().toISOString() };
-  const {url, key} = getSBConfig();
-  if(url && key){
+  const fnUrl3=getFunctionsUrl();
+  if(fnUrl3){
     try{
       await callFunction('hr-api',{action:'add_candidate',candidate_id:cid,full_name:name});
       st.textContent = '✓ Saved to database!';
@@ -1206,8 +1206,8 @@ async function loadCandidatesList(){
   const el = document.getElementById('candidates-list');
   if(!el) return;
   let candidates = [];
-  const {url, key} = getSBConfig();
-  if(url && key){
+  const fnUrl2=getFunctionsUrl();
+  if(fnUrl2){
     try{
       const resp2=await callFunction('hr-api',{action:'list_candidates'});
       candidates=resp2.candidates||[];
@@ -1262,9 +1262,9 @@ async function requireManagerPassword(){
 let allManagerResults=[];
 
 async function loadManagerDashboard(){
-  const{url,key}=getSBConfig();
+  const fnUrl=getFunctionsUrl();
   let results=[];
-  if(url&&key){
+  if(fnUrl){
     try{
       const resp=await callFunction('manager-api',{action:'list_assessments'});
       const rows=resp.assessments||[];
@@ -1482,9 +1482,9 @@ async function saveManagerScores(idx){
     return;
   }
   if(st)st.textContent='Saving...';
-  const{url,key}=getSBConfig();
+  const fnUrl5=getFunctionsUrl();
   let saved=false;
-  if(url&&key&&r.dbId){
+  if(fnUrl5&&r.dbId){
     try{
       await callFunction('manager-api',{
         action:'save_scores',
