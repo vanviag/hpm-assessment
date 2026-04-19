@@ -375,14 +375,17 @@ table.task-tbl td{padding:5px 8px;border:1px solid var(--border);color:var(--tex
 <div id="screen-manager" class="screen">
   <div class="top-bar">
     <div><span class="logo">HPM PMO · Manager Review</span><p style="font-size:18px;font-weight:400;margin-top:2px;">Candidate evaluations</p></div>
-    <button class="btn-small" onclick="show('screen-login')">← Exit</button>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn-small" onclick="loadManagerDashboard()">↺ Refresh</button>
+      <button class="btn-small" onclick="show('screen-login')">← Exit</button>
+    </div>
   </div>
 
   <!-- Supabase config -->
   <div class="supabase-setup" id="supabase-setup-panel">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
       <strong style="font-size:13px;color:var(--purple);">Database connection</strong>
-      <span style="font-size:10px;color:var(--text3);font-family:monospace;" id="app-version">v2.3 — build 20260419 19:51 UTC</span>
+      <span style="font-size:10px;color:var(--text3);font-family:monospace;" id="app-version">v2.4 — build 20260419 20:07 UTC</span>
     </div>
     <div id="debug-info" style="background:#fff;border:1px solid var(--purple-border);border-radius:var(--radius-sm);padding:8px 10px;margin-bottom:10px;font-size:11px;font-family:monospace;color:var(--text2);line-height:1.8;">
       Loading debug info...
@@ -855,7 +858,7 @@ async function loadHRData(){
       seen.add(key);return true;
     });
     const results=dedupedRows.map(r=>({
-      name:r.candidate_name,candidateId:r.candidate_id||'',theme:r.theme,timestamp:r.timestamp,
+      name:r.candidate_name,candidateId:r.candidate_id||'',theme:r.theme,timestamp:r.timestamp,candidateStatus:r.candidate_status||'',  
       stepTimes:typeof r.step_times==='object'?r.step_times:tryParse(r.step_times,{}),
       totalTime:r.total_time,
       tasks:Array.isArray(r.tasks)?r.tasks:tryParse(r.tasks,[]),
@@ -893,6 +896,7 @@ function mgrAvgScore(r){
 function mgrStatus(r){
   const ms=r.managerScores;
   if(ms&&typeof ms.step1==='number') return 'Evaluated';
+  if(r.candidateStatus==='inactive') return 'Inactive';
   if(r.issueAction&&r.issueAction.length>0) return 'Submitted';
   return 'Pending';
 }
@@ -913,7 +917,7 @@ function renderHRDashboard(results){
     const mgrSc=mgrAvgScore(r);
     const status=mgrStatus(r);
     const cls=mgrSc>=8?'pill-high':mgrSc>=6?'pill-mid':mgrSc>0?'pill-low':'pill-none';
-    const statusCls=status==='Evaluated'?'color:var(--green);':status==='Submitted'?'color:var(--amber);':'color:var(--text3);';
+    const statusCls=status==='Evaluated'?'color:var(--green);':status==='Submitted'?'color:var(--amber);':status==='Inactive'?'color:var(--red);':'color:var(--text3);';
     const date=new Date(r.timestamp).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
     const tname=THEMES[r.theme]?.label||r.theme||'—';
     const card=document.createElement('div');card.className='hr-card';
@@ -1344,7 +1348,7 @@ async function loadManagerDashboard(){
         seenMgr.add(key);return true;
       });
       results=rows.map(r=>({
-        name:r.candidate_name,theme:r.theme,timestamp:r.timestamp,
+        name:r.candidate_name,theme:r.theme,timestamp:r.timestamp,candidateStatus:r.candidate_status||'',
         candidateId:r.candidate_id||'',
         stepTimes:typeof r.step_times==='object'?r.step_times:tryParse(r.step_times,{}),
         totalTime:r.total_time,
@@ -1415,6 +1419,7 @@ function renderManagerDashboard(results){
       <div style="flex:1;">
         <p style="font-size:15px;font-weight:500;margin-bottom:3px;">${h(r.name)}
           <span class="time-badge">${fmtT(r.totalTime)}</span>
+          ${r.candidateStatus==='inactive'?'<span class="task-tag tag-deleted" style="font-size:11px;vertical-align:middle;">INACTIVE</span>':''}
         </p>
         <p style="font-size:12px;color:var(--text3);">${date} · ${h(tname)}${r.candidateId?' · '+h(r.candidateId):''}</p>
         ${stepScores}
@@ -1596,6 +1601,8 @@ async function saveManagerScores(idx){
 function backToManager(){
   show('screen-manager');
   window.scrollTo(0,0);
+  // Always reload fresh data when returning — shows updated scores immediately
+  loadManagerDashboard();
 }
 
 // ══ INACTIVATE ALL CANDIDATES ══════════════════════════════
