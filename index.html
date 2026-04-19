@@ -382,7 +382,7 @@ table.task-tbl td{padding:5px 8px;border:1px solid var(--border);color:var(--tex
   <div class="supabase-setup" id="supabase-setup-panel">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
       <strong style="font-size:13px;color:var(--purple);">Database connection</strong>
-      <span style="font-size:10px;color:var(--text3);font-family:monospace;" id="app-version">v2.1 — build 20260419</span>
+      <span style="font-size:10px;color:var(--text3);font-family:monospace;" id="app-version">v2.1 — build 20260419 19:36 UTC</span>
     </div>
     <div id="debug-info" style="background:#fff;border:1px solid var(--purple-border);border-radius:var(--radius-sm);padding:8px 10px;margin-bottom:10px;font-size:11px;font-family:monospace;color:var(--text2);line-height:1.8;">
       Loading debug info...
@@ -759,7 +759,7 @@ function saveSupabaseConfig(){
   const key=document.getElementById('sb-key').value.trim();
   if(!url){alert('Please enter the Functions URL.');return;}
   localStorage.setItem('hpm_fn_url',url);
-  if(key)localStorage.setItem(SB_KEY_KEY,key);
+  // Note: key field removed — auth goes through edge functions, no anon key needed
   document.getElementById('sb-status').textContent='Saved. Loading results...';
   // Only reload the dashboard for the current role
   const {role} = getSessionToken();
@@ -1701,8 +1701,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   // Pre-fill Supabase config if saved
   const cfg=getSBConfig();
   if(document.getElementById('sb-url')){
-    document.getElementById('sb-url').value=cfg.url;
-    document.getElementById('sb-key').value=cfg.key?'(configured)':'';
+    document.getElementById('sb-url').value=cfg.url||FUNCTIONS_URL;
+    // Don't pre-fill sb-key — it's not used for auth, only URL matters
   }
 
   // Theme grid built after login
