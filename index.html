@@ -761,8 +761,11 @@ function saveSupabaseConfig(){
   localStorage.setItem('hpm_fn_url',url);
   if(key)localStorage.setItem(SB_KEY_KEY,key);
   document.getElementById('sb-status').textContent='Saved. Loading results...';
-  loadHRData();
-  loadManagerDashboard();
+  // Only reload the dashboard for the current role
+  const {role} = getSessionToken();
+  if(role === 'hr') loadHRData();
+  else if(role === 'manager') loadManagerDashboard();
+  else { loadHRData(); loadManagerDashboard(); }
 }
 
 async function sbRequest(path,method,body){
@@ -812,6 +815,13 @@ async function loadHRData(){
   const fnUrl=getFunctionsUrl();
   const sbStatus=document.getElementById('sb-status');
   const hrStatus=document.getElementById('hr-conn-status');
+  // Ensure HR token is active for this call
+  const sess=getSessionToken();
+  if(sess.role!=='hr' && sess.role!==''){
+    // Don't call HR api with manager token
+    if(hrStatus){hrStatus.textContent='HR access requires HR login.';hrStatus.style.color='var(--amber)';}
+    return;
+  }
   if(!fnUrl){
     if(sbStatus)sbStatus.textContent='Not configured.';
     if(hrStatus){hrStatus.textContent='⚠ Functions URL not set.';hrStatus.style.color='var(--amber)';}
@@ -1258,6 +1268,7 @@ async function requireManagerPassword(){
   if(pwd===null)return;
   const ok=await verifyAccessPassword('manager',pwd);
   if(ok){
+    setSessionToken('manager', pwd);  // ensure Manager token set before loading
     show('screen-manager');
     setTimeout(()=>{
       populateDebugInfo();
@@ -1602,23 +1613,27 @@ async function verifyAccessPassword(role,pwd){
   // Verify via edge function (server holds real hash)
   // For HR role, we call hr-api with action:'verify' using the hash as token
   // For manager role, same via manager-api
+  // First try local hash check (fast, no network needed)
+  const LOCAL_HASHES={
+    hr:'bcb70742aad2b11dddb9cc1708e1b918199f8484f3d4f30aeece88d140cfd04a',
+    manager:'df45e38df981dae2bf8537b344907145d2cc204fd26911a4ac9e6221817f70c4'
+  };
+  if(LOCAL_HASHES[role]===pwdHash){
+    // Valid — set token and return true without calling edge fn
+    setSessionToken(role, pwd);
+    return true;
+  }
+  // If local hash doesn't match, try edge function (in case password was changed server-side)
   try{
     const fnName = role==='hr'?'hr-api':'manager-api';
-    // Send plaintext password as token — edge fn will hash and compare
     setSessionToken(role, pwd);
     await callFunction(fnName,{action:'verify'});
     return true;
   }catch(e){
     setSessionToken('','');
-    // Edge fn failed (network/config) — fall back to local hash check
-    console.warn('Edge fn verify failed, using local hash:',e.message);
+    console.warn('Edge fn verify also failed:',e.message);
   }
-  // Local fallback hashes (sha256 of 'hr1234' and 'mng1234')
-  const LOCAL_HASHES={
-    hr:'bcb70742aad2b11dddb9cc1708e1b918199f8484f3d4f30aeece88d140cfd04a',
-    manager:'df45e38df981dae2bf8537b344907145d2cc204fd26911a4ac9e6221817f70c4'
-  };
-  return LOCAL_HASHES[role]===pwdHash;
+  return false; // all checks failed
 }
 
 // Sanitise all user input — strip HTML tags and limit length
@@ -1673,6 +1688,7 @@ async function requireHRPassword(){
   if(pwd===null)return;
   const ok=await verifyAccessPassword('hr',pwd);
   if(ok){
+    setSessionToken('hr', pwd);  // ensure HR token set before loading
     show('screen-hr');
     setTimeout(()=>{loadHRData();loadCandidatesList();},100);
   } else {
