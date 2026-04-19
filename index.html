@@ -380,13 +380,19 @@ table.task-tbl td{padding:5px 8px;border:1px solid var(--border);color:var(--tex
 
   <!-- Supabase config -->
   <div class="supabase-setup" id="supabase-setup-panel">
-    <strong style="font-size:13px;color:var(--purple);display:block;margin-bottom:4px;">Supabase connection</strong>
-    <p style="font-size:12px;color:var(--text2);margin-bottom:10px;">Credentials are pre-configured in the app file. Use this panel only to override them temporarily on this machine. Leave blank to use the built-in configuration.</p>
-    <div style="margin-bottom:8px;"><label style="font-size:11px;color:var(--text3);">FUNCTIONS BASE URL</label>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <strong style="font-size:13px;color:var(--purple);">Database connection</strong>
+      <span style="font-size:10px;color:var(--text3);font-family:monospace;" id="app-version">v2.1 — build 20260419</span>
+    </div>
+    <div id="debug-info" style="background:#fff;border:1px solid var(--purple-border);border-radius:var(--radius-sm);padding:8px 10px;margin-bottom:10px;font-size:11px;font-family:monospace;color:var(--text2);line-height:1.8;">
+      Loading debug info...
+    </div>
+    <div style="margin-bottom:8px;"><label style="font-size:11px;color:var(--text3);">OVERRIDE FUNCTIONS URL (leave blank to use built-in)</label>
       <input class="cfg-input" id="sb-url" placeholder="https://xxxx.supabase.co/functions/v1" style="margin-top:4px;"></div>
     <input type="hidden" id="sb-key" value="">
     <div style="display:flex;gap:8px;align-items:center;">
       <button class="btn-small" onclick="saveSupabaseConfig()">Save & connect</button>
+      <button class="btn-small" onclick="testConnection()">Test connection</button>
       <span id="sb-status" style="font-size:12px;color:var(--text3);"></span>
     </div>
   </div>
@@ -1253,9 +1259,39 @@ async function requireManagerPassword(){
   const ok=await verifyAccessPassword('manager',pwd);
   if(ok){
     show('screen-manager');
-    setTimeout(loadManagerDashboard,100);
+    setTimeout(()=>{
+      populateDebugInfo();
+      loadManagerDashboard();
+    },100);
   } else {
     alert('Incorrect password.');
+  }
+}
+
+function populateDebugInfo(){
+  const el=document.getElementById('debug-info');
+  if(!el)return;
+  const fnUrl=getFunctionsUrl();
+  const stored=localStorage.getItem('hpm_fn_url')||'(not set)';
+  const token=sessionStorage.getItem('hpm_token')||'(not set)';
+  el.innerHTML=
+    'Built-in URL: '+FUNCTIONS_URL+'<br>'+
+    'localStorage override: '+stored+'<br>'+
+    'Active URL: '+(fnUrl||'EMPTY — THIS IS THE BUG')+'<br>'+
+    'Session token: '+(token.length>0?token.substring(0,8)+'...':'EMPTY — login may have failed')+'<br>'+
+    'Browser: '+navigator.userAgent.substring(0,60);
+}
+
+async function testConnection(){
+  const st=document.getElementById('sb-status');
+  if(st)st.textContent='Testing...';
+  try{
+    const data=await callFunction('manager-api',{action:'verify'});
+    if(st){st.textContent='✓ Connected!';st.style.color='var(--green)';}
+    setTimeout(()=>{if(st){st.textContent='';st.style.color='';}},3000);
+  }catch(e){
+    if(st){st.textContent='✗ Error: '+e.message.substring(0,80);st.style.color='var(--red)';}
+    console.error('testConnection failed:',e);
   }
 }
 
@@ -1283,8 +1319,18 @@ async function loadManagerDashboard(){
         managerComment:r.manager_comment||'',
         dbId:r.id||null
       }));
-    }catch(e){results=getLocalResults();}
-  } else {results=getLocalResults();}
+    }catch(e){
+      console.error('loadManagerDashboard error:',e.message);
+      // Update status panel with real error
+      const sbSt=document.getElementById('sb-status');
+      if(sbSt)sbSt.textContent='Error: '+e.message.substring(0,100);
+      results=getLocalResults();
+    }
+  } else {
+    const sbSt=document.getElementById('sb-status');
+    if(sbSt)sbSt.textContent='No Functions URL configured.';
+    results=getLocalResults();
+  }
   allManagerResults=results;
   renderManagerDashboard(results);
 }
@@ -1558,12 +1604,14 @@ async function verifyAccessPassword(role,pwd){
   // For manager role, same via manager-api
   try{
     const fnName = role==='hr'?'hr-api':'manager-api';
+    // Send plaintext password as token — edge fn will hash and compare
     setSessionToken(role, pwd);
     await callFunction(fnName,{action:'verify'});
-    return true; // if function returned without error, token is valid
+    return true;
   }catch(e){
     setSessionToken('','');
-    // fall through to local hash check
+    // Edge fn failed (network/config) — fall back to local hash check
+    console.warn('Edge fn verify failed, using local hash:',e.message);
   }
   // Local fallback hashes (sha256 of 'hr1234' and 'mng1234')
   const LOCAL_HASHES={
