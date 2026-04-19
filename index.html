@@ -298,7 +298,7 @@ table.task-tbl td{padding:5px 8px;border:1px solid var(--border);color:var(--tex
     <span class="lbl">Why did you choose that approach? What factors did you weigh?</span>
     <textarea id="issue-why" placeholder="Explain your reasoning..." style="min-height:110px;margin-top:6px;"></textarea>
   </div>
-  <button class="btn btn-primary btn-full" onclick="submitAssessment()">Submit assessment</button>
+  <button class="btn btn-primary btn-full" id="submit-btn" onclick="submitAssessment()">Submit assessment</button>
 </div>
 
 <!-- ══ EVALUATING ═══════════════════════════════════════════ -->
@@ -382,7 +382,7 @@ table.task-tbl td{padding:5px 8px;border:1px solid var(--border);color:var(--tex
   <div class="supabase-setup" id="supabase-setup-panel">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
       <strong style="font-size:13px;color:var(--purple);">Database connection</strong>
-      <span style="font-size:10px;color:var(--text3);font-family:monospace;" id="app-version">v2.1 — build 20260419 19:36 UTC</span>
+      <span style="font-size:10px;color:var(--text3);font-family:monospace;" id="app-version">v2.3 — build 20260419 19:51 UTC</span>
     </div>
     <div id="debug-info" style="background:#fff;border:1px solid var(--purple-border);border-radius:var(--radius-sm);padding:8px 10px;margin-bottom:10px;font-size:11px;font-family:monospace;color:var(--text2);line-height:1.8;">
       Loading debug info...
@@ -673,15 +673,23 @@ async function submitAssessment(){
   const a=document.getElementById('issue-action').value.trim();
   const w=document.getElementById('issue-why').value.trim();
   if(!a||!w){alert('Please answer both questions before submitting.');return;}
+  // Disable button immediately to prevent double-submit
+  const submitBtn=document.getElementById('submit-btn');
+  if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Submitting...';}
   S.issueAction=a;S.issueWhy=w;
   const ip=document.getElementById('plan-panel-issue');
   if(ip&&ip.style.display==='block'){S.planNotes=document.getElementById('plan-notes-issue').value;ip.style.display='none';}
   S.planChangeSummary=buildChangeSummary();
   stopStep('issue');S.totalTime=totalElapsed;clearInterval(totalInterval);
   const record=sanitiseRecord({...S,tasks:S.tasks.map(t=>({...t})),timestamp:new Date().toISOString(),id:Date.now()});
-  await saveResult(record);
-  if(S.candidateId)await markCandidateCompleted(S.candidateId);
-  buildTimeSummary();show('screen-done');
+  try{
+    await saveResult(record);
+    if(S.candidateId)await markCandidateCompleted(S.candidateId);
+    buildTimeSummary();show('screen-done');
+  }catch(e){
+    // saveResult failed - button already re-enabled inside saveResult
+    alert('Submission failed: '+e.message+'. Please try again. If the problem persists, contact TA.');
+  }
 }
 
 function buildTimeSummary(){
@@ -804,10 +812,16 @@ async function saveResult(record){
   try{
     await callFunction('submit-assessment', payload);
   }catch(e){
-    console.warn('submit-assessment failed, saving locally:',e.message);
+    console.warn('submit-assessment failed:',e.message);
+    // Re-enable button so candidate can try again
+    const btn=document.getElementById('submit-btn');
+    if(btn){btn.disabled=false;btn.textContent='Submit assessment';}
+    // Save locally as fallback but warn candidate
     const all=JSON.parse(localStorage.getItem('pm_local_results')||'[]');
-    all.push(record);
-    localStorage.setItem('pm_local_results',JSON.stringify(all));
+    // Only save locally if not already there (prevent duplicates)
+    const already=all.find(x=>x.candidateId===record.candidateId);
+    if(!already){all.push(record);localStorage.setItem('pm_local_results',JSON.stringify(all));}
+    throw e; // re-throw so submitAssessment shows error
   }
 }
 
@@ -833,7 +847,14 @@ async function loadHRData(){
   try{
     const resp=await callFunction('hr-api',{action:'list_assessments'});
     const rows=resp.assessments||[];
-    const results=rows.map(r=>({
+    // Deduplicate by candidate_id — keep most recent if duplicates exist
+    const seen=new Set();
+    const dedupedRows=rows.filter(r=>{
+      const key=r.candidate_id||r.id;
+      if(seen.has(key))return false;
+      seen.add(key);return true;
+    });
+    const results=dedupedRows.map(r=>({
       name:r.candidate_name,candidateId:r.candidate_id||'',theme:r.theme,timestamp:r.timestamp,
       stepTimes:typeof r.step_times==='object'?r.step_times:tryParse(r.step_times,{}),
       totalTime:r.total_time,
@@ -1314,7 +1335,14 @@ async function loadManagerDashboard(){
   if(fnUrl){
     try{
       const resp=await callFunction('manager-api',{action:'list_assessments'});
-      const rows=resp.assessments||[];
+      const rawRows=resp.assessments||[];
+      // Deduplicate by candidate_id — keep most recent
+      const seenMgr=new Set();
+      const rows=rawRows.filter(r=>{
+        const key=r.candidate_id||r.id;
+        if(seenMgr.has(key))return false;
+        seenMgr.add(key);return true;
+      });
       results=rows.map(r=>({
         name:r.candidate_name,theme:r.theme,timestamp:r.timestamp,
         candidateId:r.candidate_id||'',
@@ -1394,7 +1422,7 @@ function renderManagerDashboard(results){
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;margin-left:12px;">
         ${mgrScored?`<span class="pill ${mgrCls}">Mgr: ${mgrSc}/10</span>`:`<span class="pill pill-none">Not scored</span>`}
-        <span class="pill ${aiCls}" style="font-size:11px;">${aiSc>0?'AI: '+aiSc+'/10':'No AI'}</span>
+
         <button class="btn-small" onclick="openManagerReview(allManagerResults[${idx}],${idx})" style="margin-top:4px;">${mgrScored?'Edit scores →':'Review & score →'}</button>
       </div>
     </div>`;
