@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://*.supabase.co; img-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<title>HPM PMO Sustaining Internship Assessment</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#fafaf8;--surface:#fff;--border:#e5e3dc;--border2:#ccc9c0;
+  --text:#1a1a18;--text2:#6b6960;--text3:#9b9890;
+  --blue:#1e6fd4;--blue-bg:#eef4fd;--blue-border:#b8d0f0;--blue-text:#0d4a9e;
+  --green:#1a7a4a;--green-bg:#edf7f2;--green-border:#9fd4b8;
+  --red:#c0392b;--red-bg:#fdf0ee;--red-border:#f0b8b2;
+  --amber:#a05c00;--amber-bg:#fdf5e6;--amber-border:#f0d090;
+  --purple:#5b21b6;--purple-bg:#f5f3ff;--purple-border:#c4b5fd;
+  --radius:10px;--radius-sm:6px;
+}
+body{font-family:'Georgia',serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.65;}
+.app{max-width:740px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+.screen{display:none;}.screen.active{display:block;}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+.logo{font-size:11px;font-weight:400;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;}
+.btn-small{padding:6px 14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;transition:background .12s;}
+.btn-small:hover{background:var(--border);}
+.steps-row{display:flex;gap:6px;margin-bottom:2rem;}
+.step-seg{height:3px;flex:1;border-radius:2px;background:var(--border);transition:background .3s;}
+.step-seg.done{background:var(--text);}
+.step-seg.active{background:var(--blue);}
+h1{font-size:26px;font-weight:400;margin-bottom:8px;letter-spacing:-.02em;}
+h2{font-size:20px;font-weight:400;margin-bottom:6px;letter-spacing:-.01em;}
+.sub{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:1.5rem;}
+.lbl{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;display:block;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1rem;}
+.info-card{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1rem;}
+.warn-card{background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1rem;}
+.success-card{background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1rem;}
+input[type=text],input[type=email],input[type=password]{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border .15s;}
+input:focus{border-color:var(--blue);}
+textarea{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-size:14px;font-family:inherit;line-height:1.6;resize:vertical;outline:none;transition:border .15s;}
+textarea:focus{border-color:var(--blue);}
+.btn{display:inline-block;padding:10px 22px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:transparent;color:var(--text);font-size:14px;font-family:inherit;cursor:pointer;transition:all .12s;}
+.btn:hover{background:var(--border);}
+.btn-primary{background:var(--text);color:var(--bg);border-color:var(--text);}
+.btn-primary:hover{opacity:.85;background:var(--text);}
+.btn-full{display:block;width:100%;text-align:center;padding:12px;}
+.btn-link{color:var(--blue-text);font-size:13px;padding:0;background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;}
+.timer-banner{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 16px;margin-bottom:1.25rem;}
+.timer-item{text-align:center;}
+.timer-val{font-size:18px;font-weight:400;color:var(--text);}
+.timer-val.warn{color:var(--amber);}
+.timer-val.danger{color:var(--red);}
+.timer-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-top:1px;}
+.timer-div{width:1px;height:30px;background:var(--border);}
+.pb-wrap{height:4px;background:var(--border);border-radius:2px;margin-bottom:1.25rem;overflow:hidden;}
+.pb-fill{height:100%;border-radius:2px;background:var(--blue);transition:width 1s linear,background .3s;}
+/* Task grid */
+.task-header,.task-row{display:grid;grid-template-columns:2.5fr 1fr 1.2fr 1.2fr 28px;gap:6px;align-items:center;margin-bottom:6px;}
+.task-row input{font-size:13px;}
+.task-row.changed input{border-color:var(--amber);background:var(--amber-bg);}
+.task-row.added input{border-color:var(--green);background:var(--green-bg);}
+.task-tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;letter-spacing:.05em;white-space:nowrap;}
+.tag-added{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.tag-changed{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);}
+.tag-deleted{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+/* Plan edit panel */
+.plan-panel{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1rem;display:none;}
+.plan-panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+/* HR */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem;}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;text-align:center;}
+.metric-val{font-size:22px;font-weight:400;}
+.metric-lbl{font-size:11px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:.05em;}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;}
+.pill-high{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.pill-mid{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);}
+.pill-low{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.pill-none{background:var(--bg);color:var(--text3);border:1px solid var(--border);}
+.hr-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;overflow:hidden;}
+.hr-card-head{display:flex;justify-content:space-between;align-items:flex-start;padding:1.25rem 1.5rem;cursor:pointer;user-select:none;}
+.hr-card-head:hover{background:var(--bg);}
+.hr-card-body{padding:0 1.5rem 1.5rem;border-top:1px solid var(--border);display:none;}
+.hr-card-body.open{display:block;}
+.dim-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:1rem 0;}
+.dim-box{background:var(--bg);border-radius:var(--radius-sm);padding:10px;}
+.dim-score{font-size:20px;font-weight:400;}
+.dim-lbl{font-size:11px;color:var(--text3);margin-top:1px;text-transform:uppercase;letter-spacing:.05em;}
+.dim-comment{font-size:11px;color:var(--text2);margin-top:5px;line-height:1.5;}
+.resp-section{margin-top:1rem;}
+.resp-text{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;color:var(--text2);line-height:1.65;white-space:pre-wrap;min-height:36px;}
+table.task-tbl{width:100%;border-collapse:collapse;font-size:12px;}
+table.task-tbl th{background:var(--bg);color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:10px;padding:5px 8px;border:1px solid var(--border);}
+table.task-tbl td{padding:5px 8px;border:1px solid var(--border);color:var(--text2);}
+.toggle-arrow{font-size:11px;color:var(--text3);transition:transform .2s;margin-left:8px;}
+.toggle-arrow.open{transform:rotate(180deg);}
+.step-num{min-width:26px;height:26px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text2);flex-shrink:0;}
+.divider{height:1px;background:var(--border);margin:1.25rem 0;}
+
+.time-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;background:var(--bg);border:1px solid var(--border);color:var(--text3);margin-left:8px;vertical-align:middle;}
+.supabase-setup{background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.5rem;}
+.cfg-input{width:100%;padding:8px 10px;border:1px solid var(--purple-border);border-radius:var(--radius-sm);background:#fff;color:var(--text);font-size:13px;font-family:monospace;margin-top:4px;}
+
+.review-section{margin-bottom:2rem;}
+.review-section h3{font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.review-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:.75rem;}
+.review-q{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.review-a{font-size:14px;color:var(--text);line-height:1.7;white-space:pre-wrap;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ WELCOME ══════════════════════════════════════════════ -->
+<!-- ══ LOGIN ═══════════════════════════════════════════════ -->
+<div id="screen-login" class="screen active">
+  <div class="top-bar">
+    <span class="logo">HPM PMO · Internship Assessment</span>
+    <div style="display:flex;gap:8px;"><button class="btn-small" onclick="requireHRPassword()">HR access →</button><button class="btn-small" onclick="requireManagerPassword()">Manager access →</button></div>
+  </div>
+  <h1>HPM PMO Sustaining<br>Internship Assessment</h1>
+  <p class="sub">Welcome. Please log in with the candidate ID and password provided by the HR team.</p>
+  <div class="card">
+    <span class="lbl">Candidate ID</span>
+    <input type="text" id="login-id" placeholder="e.g. HPM-260418-001" autocomplete="off" onkeydown="if(event.key==='Enter')candidateLogin()">
+    <div style="margin-top:12px;">
+      <span class="lbl">Password</span>
+      <input type="password" id="login-pwd" placeholder="Your password" autocomplete="off" onkeydown="if(event.key==='Enter')candidateLogin()">
+    </div>
+    <p id="login-error" style="font-size:13px;color:var(--red);margin-top:8px;display:none;">Please confirm that you are using the right Candidate ID and the password that you received from TA.</p>
+    <div style="margin-top:14px;">
+      <button class="btn btn-primary btn-full" onclick="candidateLogin()">Log in</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WELCOME (post-login) ══════════════════════════════════ -->
+<div id="screen-welcome" class="screen">
+  <div class="top-bar">
+    <span class="logo">HPM PMO · Internship Assessment</span>
+    <span id="logged-in-badge" style="font-size:12px;color:var(--text3);"></span>
+  </div>
+  <h1>HPM PMO Sustaining<br>Internship Assessment</h1>
+  <p class="sub">We want to evaluate how you think, plan, and adapt using a real-world scenario you can relate to.</p>
+  <div class="card">
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;"><div class="step-num">1</div><div><strong style="font-size:14px;">Build a project plan</strong><br><span style="font-size:13px;color:var(--text2);">Break the scenario into tasks, owners, and timelines. You can return to edit your plan at any step.</span></div></div>
+      <div style="display:flex;gap:12px;align-items:flex-start;"><div class="step-num">2</div><div><strong style="font-size:14px;">Estimate timeline, cost & resources</strong><br><span style="font-size:13px;color:var(--text2);">When does the project finish? What does it cost? Who is needed?</span></div></div>
+      <div style="display:flex;gap:12px;align-items:flex-start;"><div class="step-num">3</div><div><strong style="font-size:14px;">Identify risks & mitigations</strong><br><span style="font-size:13px;color:var(--text2);">What could go wrong, and what would you do to prevent or reduce it?</span></div></div>
+      <div style="display:flex;gap:12px;align-items:flex-start;"><div class="step-num">4</div><div><strong style="font-size:14px;">Handle a live issue</strong><br><span style="font-size:13px;color:var(--text2);">A risk just materialized. What do you do and why?</span></div></div>
+    </div>
+    <div class="divider"></div>
+    <p style="font-size:13px;color:var(--text2);">⏱ Total time limit: <strong>30 minutes.</strong> Each step has its own timer.</p>
+  </div>
+  <div id="theme-selector-card" class="card">
+    <span class="lbl">Choose the project you want to plan between the ones below</span>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:10px;"></p>
+    <div id="theme-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+  </div>
+  <button class="btn btn-primary btn-full" onclick="beginAssessment()">Begin assessment</button>
+</div>
+
+<!-- ══ PLAN ══════════════════════════════════════════════════ -->
+<div id="screen-plan" class="screen">
+  <div class="steps-row" id="steps-plan"></div>
+  <div class="timer-banner" id="timer-plan"></div>
+  <div class="pb-wrap"><div class="pb-fill" id="pb-plan"></div></div>
+  <h2>Step 1 — Build your project plan</h2>
+  <p class="sub" id="plan-sub"></p>
+  <div class="card">
+    <div class="task-header">
+      <span class="lbl" style="margin:0;">Task</span>
+      <span class="lbl" style="margin:0;">Duration</span>
+      <span class="lbl" style="margin:0;">Owner</span>
+      <span class="lbl" style="margin:0;">Depends on</span>
+      <span></span>
+    </div>
+    <div id="task-list-main"></div>
+    <button class="btn" style="font-size:13px;margin-top:6px;" onclick="addTaskMain()">+ Add task</button>
+  </div>
+  <div class="card">
+    <span class="lbl">Assumptions or constraints</span>
+    <textarea id="plan-notes" placeholder="e.g. All members available full-time. Budget limited to €500..." style="min-height:70px;margin-top:6px;"></textarea>
+  </div>
+  <button class="btn btn-primary btn-full" onclick="goToEstimate()">Continue to Step 2 →</button>
+</div>
+
+<!-- ══ ESTIMATE ══════════════════════════════════════════════ -->
+<div id="screen-estimate" class="screen">
+  <div class="steps-row" id="steps-estimate"></div>
+  <div class="timer-banner" id="timer-estimate"></div>
+  <div class="pb-wrap"><div class="pb-fill" id="pb-estimate"></div></div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.5rem;">
+    <h2 style="margin:0;">Step 2 — Timeline, cost & resources</h2>
+    <button class="btn-small" onclick="togglePlanPanel('estimate')">Edit my plan ✎</button>
+  </div>
+  <p class="sub">Based on your plan, answer these three questions. Give your best estimates and explain your reasoning.</p>
+  <div class="plan-panel" id="plan-panel-estimate">
+    <div class="plan-panel-head">
+      <strong style="font-size:13px;color:var(--blue-text);">Edit your project plan</strong>
+      <button class="btn-small" onclick="togglePlanPanel('estimate')">Done ×</button>
+    </div>
+    <div class="task-header">
+      <span class="lbl" style="margin:0;">Task</span><span class="lbl" style="margin:0;">Duration</span>
+      <span class="lbl" style="margin:0;">Owner</span><span class="lbl" style="margin:0;">Depends on</span><span></span>
+    </div>
+    <div id="task-list-estimate"></div>
+    <button class="btn" style="font-size:13px;margin-top:6px;" onclick="addTaskPanel('estimate')">+ Add task</button>
+    <div style="margin-top:10px;"><span class="lbl">Notes</span>
+      <textarea id="plan-notes-estimate" style="min-height:55px;margin-top:4px;" placeholder="Assumptions or constraints..."></textarea>
+    </div>
+  </div>
+  <div class="card">
+    <span class="lbl">How long will it take from start to completion, and why?</span>
+    <textarea id="est-timeline" placeholder="e.g. I estimate 10 weeks total because the backend alone takes 2–3 weeks..." style="min-height:100px;margin-top:6px;"></textarea>
+  </div>
+  <div class="card">
+    <span class="lbl">What will it cost, and why? Break it down if you can.</span>
+    <textarea id="est-cost" placeholder="e.g. Total ~€1,200. Item A: €X, Item B: €Y, contingency: €Z..." style="min-height:110px;margin-top:6px;"></textarea>
+  </div>
+  <div class="card">
+    <span class="lbl">What resources (people, tools, skills) are needed? Be specific.</span>
+    <textarea id="est-resources" placeholder="e.g. 2 developers, 1 designer, 1 coordinator. Tools: Figma, GitHub..." style="min-height:110px;margin-top:6px;"></textarea>
+  </div>
+  <button class="btn btn-primary btn-full" onclick="goToRisks()">Continue to Step 3 →</button>
+</div>
+
+<!-- ══ RISKS ════════════════════════════════════════════════ -->
+<div id="screen-risks" class="screen">
+  <div class="steps-row" id="steps-risks"></div>
+  <div class="timer-banner" id="timer-risks"></div>
+  <div class="pb-wrap"><div class="pb-fill" id="pb-risks"></div></div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.5rem;">
+    <h2 style="margin:0;">Step 3 — What could go wrong?</h2>
+    <button class="btn-small" onclick="togglePlanPanel('risks')">Edit my plan ✎</button>
+  </div>
+  <p class="sub">What are the biggest things that could go wrong? Think about people, resources, time, and external factors. Then tell us what you would do to prevent or reduce each one.</p>
+  <div class="plan-panel" id="plan-panel-risks">
+    <div class="plan-panel-head">
+      <strong style="font-size:13px;color:var(--blue-text);">Edit your project plan</strong>
+      <button class="btn-small" onclick="togglePlanPanel('risks')">Done ×</button>
+    </div>
+    <div class="task-header">
+      <span class="lbl" style="margin:0;">Task</span><span class="lbl" style="margin:0;">Duration</span>
+      <span class="lbl" style="margin:0;">Owner</span><span class="lbl" style="margin:0;">Depends on</span><span></span>
+    </div>
+    <div id="task-list-risks"></div>
+    <button class="btn" style="font-size:13px;margin-top:6px;" onclick="addTaskPanel('risks')">+ Add task</button>
+    <div style="margin-top:10px;"><span class="lbl">Notes</span>
+      <textarea id="plan-notes-risks" style="min-height:55px;margin-top:4px;" placeholder="Assumptions or constraints..."></textarea>
+    </div>
+  </div>
+  <div class="card">
+    <span class="lbl">Risks you foresee</span>
+    <textarea id="risks-text" placeholder="Describe the risks you see..." style="min-height:140px;margin-top:6px;"></textarea>
+  </div>
+  <div class="card">
+    <span class="lbl">How would you prevent or reduce those risks?</span>
+    <textarea id="mit-text" placeholder="For each risk, what would you do about it?" style="min-height:140px;margin-top:6px;"></textarea>
+  </div>
+  <button class="btn btn-primary btn-full" onclick="goToIssue()">Continue to Step 4 →</button>
+</div>
+
+<!-- ══ ISSUE ════════════════════════════════════════════════ -->
+<div id="screen-issue" class="screen">
+  <div class="steps-row" id="steps-issue"></div>
+  <div class="timer-banner" id="timer-issue"></div>
+  <div class="pb-wrap"><div class="pb-fill" id="pb-issue"></div></div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.5rem;">
+    <h2 style="margin:0;">Step 4 — A risk just became a problem</h2>
+    <button class="btn-small" onclick="togglePlanPanel('issue')">Edit my plan ✎</button>
+  </div>
+  <div class="plan-panel" id="plan-panel-issue">
+    <div class="plan-panel-head">
+      <strong style="font-size:13px;color:var(--blue-text);">Edit your project plan</strong>
+      <button class="btn-small" onclick="togglePlanPanel('issue')">Done ×</button>
+    </div>
+    <div class="task-header">
+      <span class="lbl" style="margin:0;">Task</span><span class="lbl" style="margin:0;">Duration</span>
+      <span class="lbl" style="margin:0;">Owner</span><span class="lbl" style="margin:0;">Depends on</span><span></span>
+    </div>
+    <div id="task-list-issue"></div>
+    <button class="btn" style="font-size:13px;margin-top:6px;" onclick="addTaskPanel('issue')">+ Add task</button>
+    <div style="margin-top:10px;"><span class="lbl">Notes</span>
+      <textarea id="plan-notes-issue" style="min-height:55px;margin-top:4px;" placeholder="Assumptions or constraints..."></textarea>
+    </div>
+  </div>
+  <div class="warn-card" id="issue-scenario"></div>
+  <div class="card">
+    <span class="lbl">What do you do right now? Walk us through your steps.</span>
+    <textarea id="issue-action" placeholder="e.g. First I would... then I would..." style="min-height:140px;margin-top:6px;"></textarea>
+  </div>
+  <div class="card">
+    <span class="lbl">Why did you choose that approach? What factors did you weigh?</span>
+    <textarea id="issue-why" placeholder="Explain your reasoning..." style="min-height:110px;margin-top:6px;"></textarea>
+  </div>
+  <button class="btn btn-primary btn-full" onclick="submitAssessment()">Submit assessment</button>
+</div>
+
+<!-- ══ EVALUATING ═══════════════════════════════════════════ -->
+<!-- ══ DONE ═════════════════════════════════════════════════ -->
+<div id="screen-done" class="screen">
+  <div class="top-bar"><span class="logo">HPM PMO · Internship Assessment</span></div>
+  <div style="text-align:center;padding:2.5rem 0;">
+    <div style="font-size:48px;margin-bottom:1rem;">✓</div>
+    <h2 style="margin-bottom:8px;">Assessment submitted</h2>
+    <p style="font-size:14px;color:var(--text2);max-width:380px;margin:0 auto 1.5rem;">Your responses have been recorded and will be reviewed by the HR team. Thank you for your time.</p>
+    <div id="time-summary" style="display:inline-block;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.5rem;font-size:13px;color:var(--text2);"></div>
+  </div>
+</div>
+
+<!-- ══ HR DASHBOARD ══════════════════════════════════════════ -->
+<div id="screen-hr" class="screen">
+  <div class="top-bar">
+    <div><span class="logo">HPM PMO · HR Dashboard</span><p style="font-size:18px;font-weight:400;margin-top:2px;">Assessment results</p></div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn-small" onclick="inactivateAllCandidates()" style="border-color:var(--red-border);color:var(--red);">Inactivate all</button>
+      <button class="btn-small" onclick="show('screen-welcome')">← Exit</button>
+    </div>
+  </div>
+
+
+  <!-- Candidate management -->
+  <div class="card" id="candidate-mgmt-panel" style="margin-bottom:1rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <strong style="font-size:14px;">Registered candidates</strong>
+      <button class="btn-small" onclick="toggleAddCandidate()">+ Add candidate</button>
+    </div>
+    <div id="add-candidate-form" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;margin-bottom:12px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div><span class="lbl">Full name</span>
+          <input type="text" id="new-cand-name" placeholder="e.g. Maria Schmidt"></div>
+        <div><span class="lbl">Candidate ID <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0;">(auto-generated, editable)</span></span>
+          <input type="text" id="new-cand-id" placeholder="e.g. HPM-260418-001"></div>
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:8px;">Password will be set to the Candidate ID automatically. Share both with the candidate.</p>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-primary" onclick="addCandidate()" style="font-size:13px;padding:8px 16px;">Save candidate</button>
+        <button class="btn-small" onclick="toggleAddCandidate()">Cancel</button>
+        <span id="add-cand-status" style="font-size:12px;color:var(--text3);"></span>
+      </div>
+    </div>
+    <div id="candidates-list"></div>
+  </div>
+
+  <!-- DB status — read-only, credentials managed in Manager dashboard only -->
+  <div id="hr-conn-banner" class="card" style="margin-bottom:1rem;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <span id="hr-conn-status" style="font-size:13px;color:var(--text3);">Checking connection...</span>
+    <button class="btn-small" onclick="loadHRData();loadCandidatesList();" style="flex-shrink:0;">↺ Refresh</button>
+  </div>
+  <div id="hr-metrics" class="metrics"></div>
+
+  <div id="hr-cards"></div>
+</div>
+
+
+<!-- ══ HR REVIEW ════════════════════════════════════════════ -->
+<div id="screen-hr-review" class="screen">
+  <div class="top-bar">
+    <div>
+      <span class="logo">HPM PMO · HR Dashboard</span>
+      <p style="font-size:18px;font-weight:400;margin-top:2px;" id="review-title">Candidate review</p>
+    </div>
+    <button class="btn-small" onclick="backToHR()">← All candidates</button>
+  </div>
+  <div id="review-body"></div>
+</div>
+
+
+<!-- ══ MANAGER DASHBOARD ════════════════════════════════════ -->
+<div id="screen-manager" class="screen">
+  <div class="top-bar">
+    <div><span class="logo">HPM PMO · Manager Review</span><p style="font-size:18px;font-weight:400;margin-top:2px;">Candidate evaluations</p></div>
+    <button class="btn-small" onclick="show('screen-login')">← Exit</button>
+  </div>
+
+  <!-- Supabase config -->
+  <div class="supabase-setup" id="supabase-setup-panel">
+    <strong style="font-size:13px;color:var(--purple);display:block;margin-bottom:4px;">Supabase connection</strong>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:10px;">Credentials are pre-configured in the app file. Use this panel only to override them temporarily on this machine. Leave blank to use the built-in configuration.</p>
+    <div style="margin-bottom:8px;"><label style="font-size:11px;color:var(--text3);">FUNCTIONS BASE URL</label>
+      <input class="cfg-input" id="sb-url" placeholder="https://xxxx.supabase.co/functions/v1" style="margin-top:4px;"></div>
+    <input type="hidden" id="sb-key" value="">
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn-small" onclick="saveSupabaseConfig()">Save & connect</button>
+      <span id="sb-status" style="font-size:12px;color:var(--text3);"></span>
+    </div>
+  </div>
+
+  <div id="manager-cards"></div>
+</div>
+
+<!-- ══ MANAGER REVIEW ════════════════════════════════════════ -->
+<div id="screen-manager-review" class="screen">
+  <div class="top-bar">
+    <div><span class="logo">HPM PMO · Manager Review</span>
+      <p style="font-size:18px;font-weight:400;margin-top:2px;" id="mgr-review-title">Candidate</p>
+    </div>
+    <button class="btn-small" onclick="backToManager()">← All candidates</button>
+  </div>
+  <div id="mgr-review-body"></div>
+</div>
+
+</div><!-- /.app -->
+
+<script>
+// ══ THEMES ══════════════════════════════════════════════════
+const THEMES={
+  app:{id:'app',label:'Student mobile app',
+    planSub:'Your team of 4 engineering students is launching a mobile app helping university students find and review campus study spots. You have 8 weeks and a small budget. Edit or add tasks below.',
+    defaultTasks:[
+      {name:'Define app features and user needs',dur:'1 week',who:'Whole team',dep:'—'},
+      {name:'Design wireframes and UI mockups',dur:'1 week',who:'Designer',dep:'Task 1'},
+      {name:'Set up dev environment and tools',dur:'3 days',who:'Developer',dep:'Task 1'},
+      {name:'Build backend and database',dur:'2 weeks',who:'Developer',dep:'Task 3'},
+      {name:'Build frontend, connect to backend',dur:'2 weeks',who:'Developer',dep:'Task 4'},
+      {name:'User testing with classmates',dur:'1 week',who:'Whole team',dep:'Task 5'},
+      {name:'Fix bugs and prepare demo',dur:'1 week',who:'Whole team',dep:'Task 6'},
+    ],
+    issueTitle:'Situation — Week 4',
+    issueText:'Your lead developer has just told you they need to leave the project due to personal reasons. They built the core backend. You have 4 weeks left and a live demo scheduled with university management at the end of week 8.'},
+  festival:{id:'festival',label:'Campus music festival',
+    planSub:'Your student committee of 5 is organising a two-day outdoor music festival on campus for 1,500 attendees. You have 10 weeks and a budget of €15,000. Edit or add tasks below.',
+    defaultTasks:[
+      {name:'Define concept, lineup, and budget',dur:'1 week',who:'Committee',dep:'—'},
+      {name:'Book artists and confirm fees',dur:'2 weeks',who:'Booking lead',dep:'Task 1'},
+      {name:'Secure venue permits and insurance',dur:'2 weeks',who:'Logistics lead',dep:'Task 1'},
+      {name:'Arrange stage, sound, and equipment',dur:'2 weeks',who:'Tech lead',dep:'Task 3'},
+      {name:'Marketing and ticket sales',dur:'4 weeks',who:'Marketing lead',dep:'Task 1'},
+      {name:'Coordinate volunteers and security',dur:'1 week',who:'Operations lead',dep:'Task 4'},
+      {name:'Final rehearsal and setup',dur:'3 days',who:'Whole team',dep:'Task 6'},
+    ],
+    issueTitle:'Situation — Week 6',
+    issueText:'Your headlining artist has just cancelled due to illness. They were the main reason 60% of tickets were sold. Refund requests are starting to come in and the festival is in 4 weeks.'},
+  hackathon:{id:'hackathon',label:'University hackathon',
+    planSub:'Your team of 4 is organising a 48-hour hackathon for 200 student participants across 6 universities. You have 8 weeks to plan it. Edit or add tasks below.',
+    defaultTasks:[
+      {name:'Define theme, format, and prizes',dur:'1 week',who:'Core team',dep:'—'},
+      {name:'Secure venue and catering',dur:'1 week',who:'Logistics',dep:'Task 1'},
+      {name:'Recruit judges and sponsors',dur:'2 weeks',who:'Partnerships',dep:'Task 1'},
+      {name:'Build registration platform',dur:'1 week',who:'Tech lead',dep:'Task 1'},
+      {name:'Promote across universities',dur:'3 weeks',who:'Marketing',dep:'Task 4'},
+      {name:'Onboard mentors and volunteers',dur:'1 week',who:'Core team',dep:'Task 5'},
+      {name:'Run event and judge final projects',dur:'2 days',who:'Whole team',dep:'Task 6'},
+    ],
+    issueTitle:'Situation — Week 5',
+    issueText:'Your main sponsor has just withdrawn their €8,000 commitment due to an internal budget freeze. This covers 60% of the total budget including venue costs and all prizes. The event is in 3 weeks.'},
+  exchange:{id:'exchange',label:'International student exchange',
+    planSub:'Your university committee of 4 is coordinating a 3-month exchange programme for 30 students visiting partner universities in 3 countries. You have 12 weeks to prepare. Edit or add tasks below.',
+    defaultTasks:[
+      {name:'Confirm partner universities and quotas',dur:'1 week',who:'Programme lead',dep:'—'},
+      {name:'Application and selection process',dur:'2 weeks',who:'Admin team',dep:'Task 1'},
+      {name:'Visa and travel documentation',dur:'3 weeks',who:'Admin team',dep:'Task 2'},
+      {name:'Accommodation arrangements',dur:'2 weeks',who:'Logistics',dep:'Task 2'},
+      {name:'Pre-departure orientation',dur:'1 week',who:'Whole team',dep:'Tasks 3+4'},
+      {name:'On-arrival support and check-in',dur:'1 week',who:'Coordinators',dep:'Task 5'},
+      {name:'Ongoing monitoring and feedback',dur:'12 weeks',who:'Programme lead',dep:'Task 6'},
+    ],
+    issueTitle:'Situation — Week 8',
+    issueText:'One of the three partner universities has just informed you they can no longer host students this semester due to unexpected campus construction. 10 of your 30 students are assigned there, and their departures are in 4 weeks.'},
+  product:{id:'product',label:'Physical product launch',
+    planSub:'Your student startup team of 4 is launching a sustainable reusable water bottle to sell at university shops across 5 campuses. You have 10 weeks. Edit or add tasks below.',
+    defaultTasks:[
+      {name:'Finalise product design and specs',dur:'1 week',who:'Design lead',dep:'—'},
+      {name:'Source manufacturer and get quotes',dur:'2 weeks',who:'Operations',dep:'Task 1'},
+      {name:'Place production order (min 500 units)',dur:'1 week',who:'Operations',dep:'Task 2'},
+      {name:'Set up sales agreements with campus shops',dur:'2 weeks',who:'Sales lead',dep:'Task 1'},
+      {name:'Design packaging and brand materials',dur:'1 week',who:'Design lead',dep:'Task 1'},
+      {name:'Receive and quality-check stock',dur:'1 week',who:'Operations',dep:'Task 3'},
+      {name:'Launch and first delivery to shops',dur:'1 week',who:'Whole team',dep:'Tasks 4+6'},
+    ],
+    issueTitle:'Situation — Week 7',
+    issueText:'Your manufacturer has found a production defect in 40% of units already produced. They need to redo that portion, pushing delivery back 3 weeks. Your campus shops are expecting stock next week and some have already promoted the launch.'}
+};
+
+// ══ STATE ══════════════════════════════════════════════════
+let currentTheme=THEMES.app;
+// Each task: {name, dur, who, dep, _status:'original'|'added'|'changed'|'deleted', _orig:{...}}
+let S={
+  name:'',candidateId:'',theme:'app',tasks:[],planNotes:'',
+  estTimeline:'',estCost:'',estResources:'',
+  risksText:'',mitText:'',issueAction:'',issueWhy:'',
+  planChangeSummary:[],
+  stepTimes:{plan:0,estimate:0,risks:0,issue:0},totalTime:0
+};
+
+// ══ TIMERS ════════════════════════════════════════════════
+const LIMITS={plan:8,estimate:7,risks:8,issue:7};
+const TOTAL=30;
+let timers={},elapsed={plan:0,estimate:0,risks:0,issue:0},totalElapsed=0,totalInterval=null;
+function startTotal(){if(totalInterval)return;totalInterval=setInterval(()=>totalElapsed++,1000);}
+function startStep(step){
+  if(timers[step])clearInterval(timers[step]);
+  timers[step]=setInterval(()=>{elapsed[step]++;updateTimer(step);if(elapsed[step]>=LIMITS[step]*60){clearInterval(timers[step]);const el=document.getElementById('timer-'+step);if(el)el.style.background='var(--red-bg)';}},1000);
+  updateTimer(step);
+}
+function stopStep(step){clearInterval(timers[step]);S.stepTimes[step]=elapsed[step];}
+const fmt=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+function updateTimer(step){
+  const el=document.getElementById('timer-'+step);if(!el)return;
+  const rem=Math.max(0,LIMITS[step]*60-elapsed[step]),tot=Math.max(0,TOTAL*60-totalElapsed);
+  const pct=Math.max(0,100-(elapsed[step]/(LIMITS[step]*60))*100);
+  const cls=rem<60?'danger':rem<120?'warn':'';
+  el.innerHTML=`<div class="timer-item"><div class="timer-val ${cls}">${fmt(rem)}</div><div class="timer-lbl">This step</div></div>
+    <div class="timer-div"></div>
+    <div class="timer-item"><div class="timer-val">${fmt(elapsed[step])}</div><div class="timer-lbl">Time used</div></div>
+    <div class="timer-div"></div>
+    <div class="timer-item"><div class="timer-val ${tot<300?'warn':''}">${fmt(tot)}</div><div class="timer-lbl">Total remaining</div></div>`;
+  const pb=document.getElementById('pb-'+step);
+  if(pb){pb.style.width=pct+'%';pb.style.background=rem<60?'var(--red)':rem<120?'var(--amber)':'var(--blue)';}
+}
+function renderSteps(active){
+  const all=['plan','estimate','risks','issue'],idx=all.indexOf(active);
+  all.forEach(s=>{
+    const el=document.getElementById('steps-'+s);if(!el)return;
+    el.innerHTML='';
+    all.forEach((_,j)=>{const d=document.createElement('div');d.className='step-seg'+(j<idx?' done':j===idx?' active':'');el.appendChild(d);});
+  });
+}
+
+// ══ UTILS ══════════════════════════════════════════════════
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+
+// ══ TASK MANAGEMENT WITH CHANGE TRACKING ══════════════════
+function initTasks(){
+  S.tasks=currentTheme.defaultTasks.map(t=>({...t,_status:'original',_orig:{...t}}));
+}
+
+function markChanged(i){
+  const t=S.tasks[i];
+  if(t._status==='original'){
+    const orig=t._orig;
+    if(t.name!==orig.name||t.dur!==orig.dur||t.who!==orig.who||t.dep!==orig.dep){
+      t._status='changed';
+    }
+  }
+}
+
+function renderTasksInEl(containerId, onInput){
+  const el=document.getElementById(containerId);if(!el)return;
+  el.innerHTML='';
+  S.tasks.forEach((t,i)=>{
+    if(t._status==='deleted')return;
+    const row=document.createElement('div');
+    const rowCls=t._status==='added'?'task-row added':t._status==='changed'?'task-row changed':'task-row';
+    row.className=rowCls;
+    const badge=t._status==='added'?`<span class="task-tag tag-added">NEW</span>`:t._status==='changed'?`<span class="task-tag tag-changed">EDITED</span>`:'';
+    row.innerHTML=`<div style="display:flex;align-items:center;gap:6px;">
+        <input type="text" value="${h(t.name)}" placeholder="Task name"
+          oninput="S.tasks[${i}].name=this.value;markChanged(${i});${onInput}">
+        ${badge}
+      </div>
+      <input type="text" value="${h(t.dur)}" placeholder="Duration" oninput="S.tasks[${i}].dur=this.value;markChanged(${i});${onInput}">
+      <input type="text" value="${h(t.who)}" placeholder="Who?" oninput="S.tasks[${i}].who=this.value;markChanged(${i});${onInput}">
+      <input type="text" value="${h(t.dep)}" placeholder="Depends on" oninput="S.tasks[${i}].dep=this.value;markChanged(${i});${onInput}">
+      <button onclick="deleteTask(${i},'${containerId}','${onInput}')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:20px;line-height:1;padding:0;font-family:inherit;">×</button>`;
+    el.appendChild(row);
+  });
+}
+
+function deleteTask(i,containerId,onInput){
+  if(S.tasks[i]._status==='added'){
+    S.tasks.splice(i,1);
+  } else {
+    S.tasks[i]._status='deleted';
+  }
+  renderTasksInEl(containerId,onInput);
+  syncAllPanels();
+}
+
+function syncAllPanels(){
+  // keep all open panels in sync
+  ['estimate','risks','issue'].forEach(step=>{
+    const panel=document.getElementById('plan-panel-'+step);
+    if(panel&&panel.style.display==='block'){
+      renderTasksInEl('task-list-'+step,`syncAllPanels()`);
+    }
+  });
+  renderTasksInEl('task-list-main','syncAllPanels()');
+}
+
+function addTaskMain(){
+  S.tasks.push({name:'',dur:'',who:'',dep:'—',_status:'added',_orig:null});
+  renderTasksInEl('task-list-main','syncAllPanels()');
+}
+
+function addTaskPanel(step){
+  S.tasks.push({name:'',dur:'',who:'',dep:'—',_status:'added',_orig:null});
+  renderTasksInEl('task-list-'+step,`syncAllPanels()`);
+  syncAllPanels();
+}
+
+function togglePlanPanel(step){
+  const panel=document.getElementById('plan-panel-'+step);
+  const isOpen=panel.style.display==='block';
+  if(!isOpen){
+    renderTasksInEl('task-list-'+step,`syncAllPanels()`);
+    document.getElementById('plan-notes-'+step).value=S.planNotes||'';
+    panel.style.display='block';
+  } else {
+    S.planNotes=document.getElementById('plan-notes-'+step).value;
+    panel.style.display='none';
+  }
+  window.scrollTo(0,0);
+}
+
+function buildChangeSummary(){
+  const changes=[];
+  S.tasks.forEach((t,i)=>{
+    if(t._status==='added') changes.push(`Added: "${t.name||'(unnamed)'}"${t.dur?' ('+t.dur+')':''}`);
+    if(t._status==='deleted') changes.push(`Deleted: "${t._orig?.name||'(unnamed)'}"`)
+    if(t._status==='changed'){
+      const diffs=[];
+      if(t.name!==t._orig.name) diffs.push(`name "${t._orig.name}" → "${t.name}"`);
+      if(t.dur!==t._orig.dur) diffs.push(`duration "${t._orig.dur}" → "${t.dur}"`);
+      if(t.who!==t._orig.who) diffs.push(`owner "${t._orig.who}" → "${t.who}"`);
+      if(t.dep!==t._orig.dep) diffs.push(`dependency "${t._orig.dep}" → "${t.dep}"`);
+      if(diffs.length) changes.push(`Changed "${t.name}": ${diffs.join(', ')}`);
+    }
+  });
+  return changes;
+}
+
+// ══ NAVIGATION ════════════════════════════════════════════
+function beginAssessment(){
+  if(!loggedInCandidate){show('screen-login');return;}
+  S.name=loggedInCandidate.full_name;
+  S.candidateId=loggedInCandidate.candidate_id;
+  S.theme=currentTheme.id;
+  initTasks();
+  renderTasksInEl('task-list-main','syncAllPanels()');
+  document.getElementById('plan-sub').textContent=currentTheme.planSub;
+  document.getElementById('issue-scenario').innerHTML=`<strong style="font-size:13px;color:var(--amber);display:block;margin-bottom:6px;">${h(currentTheme.issueTitle)}</strong><p style="font-size:14px;color:var(--amber);line-height:1.65;">${h(currentTheme.issueText)}</p>`;
+  startTotal();renderSteps('plan');startStep('plan');show('screen-plan');
+}
+
+function goToEstimate(){
+  if(S.tasks.filter(t=>t.name.trim()&&t._status!=='deleted').length<2){alert('Please add at least 2 tasks.');return;}
+  S.planNotes=document.getElementById('plan-notes').value;
+  stopStep('plan');renderSteps('estimate');startStep('estimate');show('screen-estimate');
+}
+
+function goToRisks(){
+  S.estTimeline=document.getElementById('est-timeline').value.trim();
+  S.estCost=document.getElementById('est-cost').value.trim();
+  S.estResources=document.getElementById('est-resources').value.trim();
+  if(!S.estTimeline||!S.estCost||!S.estResources){alert('Please answer all three questions before continuing.');return;}
+  const ep=document.getElementById('plan-panel-estimate');
+  if(ep&&ep.style.display==='block'){S.planNotes=document.getElementById('plan-notes-estimate').value;ep.style.display='none';}
+  stopStep('estimate');renderSteps('risks');startStep('risks');show('screen-risks');
+}
+
+function goToIssue(){
+  if(!document.getElementById('risks-text').value.trim()||!document.getElementById('mit-text').value.trim()){alert('Please fill in both the risks and mitigation fields.');return;}
+  S.risksText=document.getElementById('risks-text').value;
+  S.mitText=document.getElementById('mit-text').value;
+  const rp=document.getElementById('plan-panel-risks');
+  if(rp&&rp.style.display==='block'){S.planNotes=document.getElementById('plan-notes-risks').value;rp.style.display='none';}
+  stopStep('risks');renderSteps('issue');startStep('issue');show('screen-issue');
+}
+
+async function submitAssessment(){
+  const a=document.getElementById('issue-action').value.trim();
+  const w=document.getElementById('issue-why').value.trim();
+  if(!a||!w){alert('Please answer both questions before submitting.');return;}
+  S.issueAction=a;S.issueWhy=w;
+  const ip=document.getElementById('plan-panel-issue');
+  if(ip&&ip.style.display==='block'){S.planNotes=document.getElementById('plan-notes-issue').value;ip.style.display='none';}
+  S.planChangeSummary=buildChangeSummary();
+  stopStep('issue');S.totalTime=totalElapsed;clearInterval(totalInterval);
+  const record=sanitiseRecord({...S,tasks:S.tasks.map(t=>({...t})),timestamp:new Date().toISOString(),id:Date.now()});
+  await saveResult(record);
+  if(S.candidateId)await markCandidateCompleted(S.candidateId);
+  buildTimeSummary();show('screen-done');
+}
+
+function buildTimeSummary(){
+  const fmt2=s=>`${Math.floor(s/60)}m ${s%60}s`;
+  document.getElementById('time-summary').innerHTML=`<p style="font-weight:600;margin-bottom:8px;">Your time summary</p>
+    <table style="font-size:13px;border-collapse:collapse;">
+    <tr><td style="padding:3px 12px 3px 0;color:var(--text3);">Step 1 — Project plan</td><td>${fmt2(S.stepTimes.plan)}</td></tr>
+    <tr><td style="padding:3px 12px 3px 0;color:var(--text3);">Step 2 — Estimates</td><td>${fmt2(S.stepTimes.estimate)}</td></tr>
+    <tr><td style="padding:3px 12px 3px 0;color:var(--text3);">Step 3 — Risks</td><td>${fmt2(S.stepTimes.risks)}</td></tr>
+    <tr><td style="padding:3px 12px 3px 0;color:var(--text3);">Step 4 — Issue response</td><td>${fmt2(S.stepTimes.issue)}</td></tr>
+    <tr style="border-top:1px solid var(--border);"><td style="padding:6px 12px 0 0;font-weight:600;">Total</td><td style="padding-top:6px;font-weight:600;">${fmt2(S.totalTime)}</td></tr></table>`;
+}
+
+
+
+// ══ EDGE FUNCTION CALLS ════════════════════════════════════════════
+// All sensitive DB operations go through Edge Functions.
+// The browser never holds the service role key.
+
+// Stored token for current HR/Manager session (cleared on page close)
+let _sessionToken = '';
+let _sessionRole = '';
+
+function setSessionToken(role, token){
+  _sessionToken = token;
+  _sessionRole = role;
+  sessionStorage.setItem('hpm_role', role);
+  sessionStorage.setItem('hpm_token', token);
+}
+function getSessionToken(){
+  if(!_sessionToken){
+    _sessionToken = sessionStorage.getItem('hpm_token')||'';
+    _sessionRole  = sessionStorage.getItem('hpm_role')||'';
+  }
+  return{token:_sessionToken, role:_sessionRole};
+}
+
+async function callFunction(fnName, body={}, role=''){
+  const base = getFunctionsUrl();
+  if(!base) throw new Error('Functions URL not configured. Please enter it in Manager access settings.');
+  const {token} = getSessionToken();
+  const useToken = role ? token : token;
+  const res = await fetch(`${base}/${fnName}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-hpm-token': useToken,
+    },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if(!res.ok) throw new Error(data.error || 'Function error '+res.status);
+  return data;
+}
+
+// ══ SUPABASE ══════════════════════════════════════════════
+// ══ CONFIGURATION ════════════════════════════════════════════════════
+// Set your Supabase project URL only — no keys needed in the browser.
+// All sensitive operations go through Edge Functions on the server.
+const FUNCTIONS_URL = 'https://ipuouhsbkknuhgafdgms.supabase.co/functions/v1';
+// ══════════════════════════════════════════════════════════════════════
+
+const SB_URL_KEY='hpm_sb_url',SB_KEY_KEY='hpm_sb_key';
+function getSBConfig(){
+  // Still used for legacy direct calls during transition
+  const url=localStorage.getItem(SB_URL_KEY)||'';
+  const key=localStorage.getItem(SB_KEY_KEY)||'';
+  return{url,key};
+}
+function getFunctionsUrl(){
+  return localStorage.getItem('hpm_fn_url')||FUNCTIONS_URL;
+}
+function saveSupabaseConfig(){
+  const url=document.getElementById('sb-url').value.trim();
+  const key=document.getElementById('sb-key').value.trim();
+  if(!url){alert('Please enter the Functions URL.');return;}
+  localStorage.setItem('hpm_fn_url',url);
+  if(key)localStorage.setItem(SB_KEY_KEY,key);
+  document.getElementById('sb-status').textContent='Saved. Loading results...';
+  loadHRData();
+  loadManagerDashboard();
+}
+
+async function sbRequest(path,method,body){
+  const{url,key}=getSBConfig();
+  if(!url||!key)throw new Error('Supabase not configured');
+  const res=await fetch(`${url}/rest/v1/${path}`,{
+    method:method||'GET',
+    headers:{'Content-Type':'application/json','apikey':key,'Authorization':'Bearer '+key,...(method==='POST'||method==='PATCH'?{'Prefer':'return=minimal'}:{})},
+    body:body?JSON.stringify(body):undefined
+  });
+  if(!res.ok){const t=await res.text();throw new Error('Supabase '+res.status+': '+t);}
+  if(method==='GET')return res.json();
+  if(method==='PATCH')return null;
+  return null;
+}
+
+async function saveResult(record){
+  const payload={
+    candidate_id:record.candidateId||'',
+    candidate_name:record.name,
+    theme:record.theme,
+    timestamp:record.timestamp,
+    step_times:record.stepTimes,
+    total_time:record.totalTime,
+    tasks:record.tasks,
+    plan_notes:record.planNotes||'',
+    plan_changes:record.planChangeSummary||[],
+    est_timeline:record.estTimeline||'',
+    est_cost:record.estCost||'',
+    est_resources:record.estResources||'',
+    risks_text:record.risksText||'',
+    mit_text:record.mitText||'',
+    issue_action:record.issueAction||'',
+    issue_why:record.issueWhy||'',
+  };
+  try{
+    await callFunction('submit-assessment', payload);
+  }catch(e){
+    console.warn('submit-assessment failed, saving locally:',e.message);
+    const all=JSON.parse(localStorage.getItem('pm_local_results')||'[]');
+    all.push(record);
+    localStorage.setItem('pm_local_results',JSON.stringify(all));
+  }
+}
+
+async function loadHRData(){
+  const{url,key}=getSBConfig();
+  const sbStatus=document.getElementById('sb-status');
+  const hrStatus=document.getElementById('hr-conn-status');
+  if(!url||!key){
+    if(sbStatus)sbStatus.textContent='Not configured — showing local data only.';
+    if(hrStatus){hrStatus.textContent='⚠ Database not configured. Please set SUPABASE_URL and SUPABASE_KEY at the top of the HTML file.';hrStatus.style.color='var(--amber)';}
+    renderHRDashboard(getLocalResults());
+    return;
+  }
+  if(sbStatus)sbStatus.textContent='Loading...';
+  if(hrStatus){hrStatus.textContent='Connecting...';hrStatus.style.color='var(--text3)';}
+  try{
+    const resp=await callFunction('hr-api',{action:'list_assessments'});
+    const rows=resp.assessments||[];
+    const results=rows.map(r=>({
+      name:r.candidate_name,candidateId:r.candidate_id||'',theme:r.theme,timestamp:r.timestamp,
+      stepTimes:typeof r.step_times==='object'?r.step_times:tryParse(r.step_times,{}),
+      totalTime:r.total_time,
+      tasks:Array.isArray(r.tasks)?r.tasks:tryParse(r.tasks,[]),
+      planNotes:r.plan_notes,
+      planChangeSummary:Array.isArray(r.plan_changes)?r.plan_changes:tryParse(r.plan_changes,[]),
+      estTimeline:r.est_timeline,estCost:r.est_cost,estResources:r.est_resources,
+      risksText:r.risks_text,mitText:r.mit_text,
+      issueAction:r.issue_action,issueWhy:r.issue_why,
+      managerScores:typeof r.manager_scores==='object'?r.manager_scores:tryParse(r.manager_scores||'null',null),
+      managerComment:r.manager_comment||'',
+      dbId:r.id||null
+    }));
+    if(sbStatus)sbStatus.textContent=`Connected — ${results.length} candidate${results.length!==1?'s':''} loaded.`;
+    const hrConnEl=document.getElementById('hr-conn-status');if(hrConnEl){hrConnEl.textContent=`✓ Connected — ${results.length} result${results.length!==1?'s':''} loaded.`;hrConnEl.style.color='var(--green)';}
+    const sbPanel=document.getElementById('supabase-setup-panel');
+    if(sbPanel){sbPanel.style.borderColor='var(--green-border)';sbPanel.style.background='var(--green-bg)';}
+    renderHRDashboard(results);
+  }catch(e){
+    if(sbStatus)sbStatus.textContent='Error: '+e.message+'. Showing local data.';
+    const hrErrEl=document.getElementById('hr-conn-status');if(hrErrEl){hrErrEl.textContent='✗ DB error: '+e.message.substring(0,80);hrErrEl.style.color='var(--red)';}
+    renderHRDashboard(getLocalResults());
+  }
+}
+
+function tryParse(s,def){try{return JSON.parse(s);}catch(e){return def;}}
+function getLocalResults(){return JSON.parse(localStorage.getItem('pm_local_results')||'[]');}
+
+// ══ HR DASHBOARD ══════════════════════════════════════════
+let allHRResults=[];
+function mgrAvgScore(r){
+  const ms=r.managerScores;
+  if(!ms||typeof ms.step1!=='number')return null;
+  return Math.round((ms.step1+ms.step2+ms.step3+ms.step4)/4*10)/10;
+}
+function mgrStatus(r){
+  const ms=r.managerScores;
+  if(ms&&typeof ms.step1==='number') return 'Evaluated';
+  if(r.issueAction&&r.issueAction.length>0) return 'Submitted';
+  return 'Pending';
+}
+function renderHRDashboard(results){
+  if(!results)results=[];
+  allHRResults=results;
+  const evaluated=results.filter(r=>mgrAvgScore(r)!==null);
+  const avg=evaluated.length?Math.round(evaluated.reduce((a,r)=>a+mgrAvgScore(r),0)/evaluated.length*10)/10:0;
+  const strong=evaluated.filter(r=>{const s=mgrAvgScore(r);return s!==null&&s>=8;}).length;
+  document.getElementById('hr-metrics').innerHTML=`
+    <div class="metric"><div class="metric-val">${results.length}</div><div class="metric-lbl">Candidates</div></div>
+    <div class="metric"><div class="metric-val">${evaluated.length?avg+'/10':'—'}</div><div class="metric-lbl">Avg mgr score</div></div>
+    <div class="metric"><div class="metric-val">${strong}</div><div class="metric-lbl">Strong hires (≥8)</div></div>`;
+  const cards=document.getElementById('hr-cards');cards.innerHTML='';
+  if(!results.length){cards.innerHTML='<div class="card" style="text-align:center;color:var(--text2);padding:2rem;">No assessments yet.</div>';return;}
+  const fmtT=s=>{if(!s)return'—';return`${Math.floor(s/60)}m${s%60>0?' '+s%60+'s':''}`;};
+  [...results].sort((a,b)=>(mgrAvgScore(b)||0)-(mgrAvgScore(a)||0)).forEach((r,idx)=>{
+    const mgrSc=mgrAvgScore(r);
+    const status=mgrStatus(r);
+    const cls=mgrSc>=8?'pill-high':mgrSc>=6?'pill-mid':mgrSc>0?'pill-low':'pill-none';
+    const statusCls=status==='Evaluated'?'color:var(--green);':status==='Submitted'?'color:var(--amber);':'color:var(--text3);';
+    const date=new Date(r.timestamp).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    const tname=THEMES[r.theme]?.label||r.theme||'—';
+    const card=document.createElement('div');card.className='hr-card';
+    card.innerHTML=`
+      <div class="hr-card-head" style="cursor:default;">
+        <div>
+          <p style="font-size:15px;font-weight:500;margin-bottom:3px;">${h(r.name)}
+            <span class="time-badge">${fmtT(r.totalTime)}</span>
+          </p>
+          <p style="font-size:12px;color:var(--text3);">${date} · <em>${h(tname)}</em>${r.candidateId?' · '+h(r.candidateId):''}</p>
+          <p style="font-size:12px;font-weight:600;margin-top:4px;${statusCls}">${status}</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="text-align:right;">
+            ${mgrSc!==null?`<span class="pill ${cls}" style="font-size:13px;">${mgrSc}/10</span><p style="font-size:11px;color:var(--text3);margin-top:4px;">Manager avg</p>`:`<span class="pill pill-none">Not evaluated</span>`}
+          </div>
+          <button class="btn-small" onclick="openReview(allHRResults[${idx}])">Review →</button>
+        </div>
+      </div>`;
+    cards.appendChild(card);
+  });
+}
+
+function buildHRBody(r,fmtT){
+  const st=r.stepTimes||{};
+  const timeRow=['plan','estimate','risks','issue'].map(k=>`<span style="margin-right:14px;"><strong>${{plan:'Plan',estimate:'Estimates',risks:'Risks',issue:'Issue'}[k]}:</strong> ${fmtT(st[k])}</span>`).join('');
+  const aiSec=false?`<div class="info-card" style="margin-bottom:1rem;">
+    <strong style="font-size:11px;color:var(--blue-text);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px;">AI overall assessment</strong>
+    <p style="font-size:13px;color:var(--text2);line-height:1.7;">${h(ev.overall)}</p>
+    ${ev.strengths?`<p style="font-size:13px;margin-top:8px;"><strong>Strengths:</strong> <span style="color:var(--text2);">${h(ev.strengths)}</span></p>`:''}
+    ${ev.development?`<p style="font-size:13px;margin-top:4px;"><strong>Development:</strong> <span style="color:var(--text2);">${h(ev.development)}</span></p>`:''}
+    ${ev.error?`<p style="font-size:12px;color:var(--red);margin-top:8px;"><strong>Evaluation error:</strong> ${h(ev.error)}</p>`:''}
+  </div>`:'<div class="warn-card"><p style="font-size:13px;color:var(--amber);">Not yet evaluated by manager.</p></div>';
+
+  // Plan change summary
+  const changes=Array.isArray(r.planChangeSummary)&&r.planChangeSummary.length?r.planChangeSummary:null;
+  const changeSec=changes?`<div class="resp-section"><span class="lbl">Plan changes made after Step 1</span>
+    <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">
+      ${changes.map(c=>{
+        const tag=c.startsWith('Added')?'tag-added':c.startsWith('Deleted')?'tag-deleted':'tag-changed';
+        const type=c.startsWith('Added')?'ADDED':c.startsWith('Deleted')?'DELETED':'EDITED';
+        return`<div style="display:flex;align-items:baseline;gap:8px;font-size:13px;"><span class="task-tag ${tag}">${type}</span><span style="color:var(--text2);">${h(c.replace(/^(Added|Deleted|Changed):\s*/,''))}</span></div>`;
+      }).join('')}
+    </div></div>`:
+    `<div class="resp-section"><span class="lbl">Plan changes</span><p style="font-size:13px;color:var(--text3);font-style:italic;">No changes made after Step 1.</p></div>`;
+
+  // Task table (final state, no deleted)
+  const activeTasks=(r.tasks||[]).filter(t=>t._status!=='deleted');
+  const taskTbl=activeTasks.length?`<div class="resp-section"><span class="lbl">Final project plan</span>
+    <table class="task-tbl"><thead><tr><th>Task</th><th>Duration</th><th>Owner</th><th>Depends on</th><th>Status</th></tr></thead>
+    <tbody>${activeTasks.map(t=>{
+      const badge=t._status==='added'?'<span class="task-tag tag-added">NEW</span>':t._status==='changed'?'<span class="task-tag tag-changed">EDITED</span>':'';
+      return`<tr><td>${h(t.name)}${badge?` ${badge}`:''}</td><td>${h(t.dur)}</td><td>${h(t.who)}</td><td>${h(t.dep)}</td><td>${t._status||'original'}</td></tr>`;
+    }).join('')}</tbody></table>
+    ${r.planNotes?`<p style="font-size:12px;color:var(--text3);margin-top:6px;">${h(r.planNotes)}</p>`:''}</div>`:'';
+
+  return`<div style="font-size:12px;color:var(--text2);padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:1rem;">${timeRow}</div>
+    ${ev.total_score>0?dimGrid:''}${aiSec}
+    <div class="divider"></div>
+    <p style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Full candidate responses</p>
+    ${taskTbl}${changeSec}
+    <div class="resp-section"><span class="lbl">Timeline estimate</span><div class="resp-text">${h(r.estTimeline||'—')}</div></div>
+    <div class="resp-section"><span class="lbl">Cost estimate</span><div class="resp-text">${h(r.estCost||'—')}</div></div>
+    <div class="resp-section"><span class="lbl">Resources required</span><div class="resp-text">${h(r.estResources||'—')}</div></div>
+    <div class="resp-section"><span class="lbl">Risks identified</span><div class="resp-text">${h(r.risksText||'—')}</div></div>
+    <div class="resp-section"><span class="lbl">Mitigation strategies</span><div class="resp-text">${h(r.mitText||'—')}</div></div>
+    <div class="resp-section"><span class="lbl">Issue response — actions</span><div class="resp-text">${h(r.issueAction||'—')}</div></div>
+    <div class="resp-section" style="margin-bottom:0;"><span class="lbl">Issue response — reasoning</span><div class="resp-text">${h(r.issueWhy||'—')}</div></div>`;
+}
+
+function openReview(r){
+  const fmtT=s=>{if(!s)return'—';return Math.floor(s/60)+'m'+(s%60>0?' '+s%60+'s':'');};
+  const mgrSc=mgrAvgScore(r);
+  const mgrCls=mgrSc>=8?'pill-high':mgrSc>=6?'pill-mid':mgrSc>0?'pill-low':'pill-none';
+  const tname=THEMES[r.theme]?.label||r.theme||'—';
+  const date=new Date(r.timestamp).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('review-title').textContent=r.name;
+
+  // Time row
+  const st=r.stepTimes||{};
+  const timeRow=['plan','estimate','risks','issue'].map(k=>`<span style="margin-right:14px;"><strong>${{plan:'Plan',estimate:'Estimates',risks:'Risks',issue:'Issue'}[k]}:</strong> ${fmtT(st[k])}</span>`).join('');
+
+  // Plan changes
+  const changes=Array.isArray(r.planChangeSummary)&&r.planChangeSummary.length?r.planChangeSummary:null;
+  const changeSec=changes?changes.map(c=>{
+    const tag=c.startsWith('Added')?'tag-added':c.startsWith('Deleted')?'tag-deleted':'tag-changed';
+    const type=c.startsWith('Added')?'ADDED':c.startsWith('Deleted')?'DELETED':'EDITED';
+    return`<div style="display:flex;align-items:baseline;gap:8px;font-size:13px;margin-bottom:4px;"><span class="task-tag ${tag}">${type}</span><span style="color:var(--text2);">${h(c.replace(/^(Added|Deleted|Changed):\s*/,''))}</span></div>`;
+  }).join(''):'<p style="font-size:13px;color:var(--text3);font-style:italic;">No changes made after Step 1.</p>';
+
+  // Final plan table
+  const activeTasks=(r.tasks||[]).filter(t=>t._status!=='deleted');
+  const taskRows=activeTasks.map(t=>{
+    const badge=t._status==='added'?'<span class="task-tag tag-added">NEW</span>':t._status==='changed'?'<span class="task-tag tag-changed">EDITED</span>':'';
+    return`<tr><td>${h(t.name)}${badge?' '+badge:''}</td><td>${h(t.dur)}</td><td>${h(t.who)}</td><td>${h(t.dep)}</td></tr>`;
+  }).join('');
+
+  document.getElementById('review-body').innerHTML=`
+    <!-- Header card -->
+    <div class="review-block" style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;">
+      <div>
+        <p style="font-size:18px;font-weight:500;margin-bottom:4px;">${h(r.name)}</p>
+        <p style="font-size:13px;color:var(--text3);">${date} · ${h(tname)}${r.candidateId?' · '+h(r.candidateId):''}</p>
+        <div style="margin-top:8px;font-size:12px;color:var(--text2);">${timeRow}</div>
+      </div>
+      <div style="text-align:right;">
+        ${mgrSc!==null?`<span class="pill ${mgrCls}" style="font-size:14px;padding:5px 14px;">${mgrSc}/10</span><p style="font-size:12px;color:var(--text3);margin-top:6px;">Manager avg</p>`:`<span class="pill pill-none" style="font-size:14px;padding:5px 14px;">Not evaluated</span>`}
+      </div>
+    </div>
+
+    <!-- Manager evaluation -->
+    ${mgrAvgScore(r)!==null?`<div class="review-section">
+      <h3>Manager evaluation</h3>
+      <div class="review-block">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;${r.managerComment?'margin-bottom:12px;':''}">
+          ${['step1','step2','step3','step4'].map((s,i)=>`<div class="dim-box"><div class="dim-score">${r.managerScores[s]}/10</div><div class="dim-lbl">Step ${i+1}</div></div>`).join('')}
+        </div>
+        <div style="padding:8px 0 0;border-top:1px solid var(--border);margin-top:8px;">
+          <span style="font-size:18px;font-weight:500;">${mgrAvgScore(r)}/10</span>
+          <span style="font-size:13px;color:var(--text3);margin-left:8px;">Average</span>
+        </div>
+        ${r.managerComment?`<div style="margin-top:10px;"><div class="review-q">Manager comment</div><div class="review-a">${h(r.managerComment)}</div></div>`:''}
+      </div>
+    </div>`:'<div class="warn-card" style="margin-bottom:1.5rem;"><p style="font-size:13px;color:var(--amber);">Not yet evaluated by manager.</p></div>'}
+
+    <!-- Project Plan -->
+    <div class="review-section">
+      <h3>Project plan</h3>
+      <div class="review-block">
+        <table class="task-tbl"><thead><tr><th>Task</th><th>Duration</th><th>Owner</th><th>Depends on</th></tr></thead>
+        <tbody>${taskRows}</tbody></table>
+        ${r.planNotes?`<p style="font-size:12px;color:var(--text3);margin-top:8px;">${h(r.planNotes)}</p>`:''}
+      </div>
+      <div class="review-block">
+        <div class="review-q">Plan changes after Step 1</div>
+        ${changeSec}
+      </div>
+    </div>
+
+    <!-- Estimates -->
+    <div class="review-section">
+      <h3>Estimates</h3>
+      <div class="review-block"><div class="review-q">How long will it take and why?</div><div class="review-a">${h(r.estTimeline||'—')}</div></div>
+      <div class="review-block"><div class="review-q">What will it cost?</div><div class="review-a">${h(r.estCost||'—')}</div></div>
+      <div class="review-block"><div class="review-q">What resources are needed?</div><div class="review-a">${h(r.estResources||'—')}</div></div>
+    </div>
+
+    <!-- Risks -->
+    <div class="review-section">
+      <h3>Risks & mitigation</h3>
+      <div class="review-block"><div class="review-q">Risks foreseen</div><div class="review-a">${h(r.risksText||'—')}</div></div>
+      <div class="review-block"><div class="review-q">How to prevent or reduce them</div><div class="review-a">${h(r.mitText||'—')}</div></div>
+    </div>
+
+    <!-- Issue response -->
+    <div class="review-section">
+      <h3>Issue response</h3>
+      <div class="review-block"><div class="review-q">What do you do right now?</div><div class="review-a">${h(r.issueAction||'—')}</div></div>
+      <div class="review-block" style="margin-bottom:0;"><div class="review-q">Why did you choose that approach?</div><div class="review-a">${h(r.issueWhy||'—')}</div></div>
+    </div>
+
+    <button class="btn btn-full" onclick="backToHR()" style="margin-top:.5rem;">← Back to all candidates</button>
+  `;
+  show('screen-hr-review');
+  window.scrollTo(0,0);
+}
+
+function backToHR(){
+  show('screen-hr');
+  window.scrollTo(0,0);
+}
+function toggleEmailPanel(){const p=document.getElementById('email-panel');p.style.display=p.style.display==='none'?'block':'none';}
+
+async function sendEmail(){
+  const email=document.getElementById('hr-email')?.value.trim();
+  if(!email){alert('Please enter an email address.');return;}
+  const results=getLocalResults();
+  const summary=results.map(r=>{const mgrSc=mgrAvgScore(r);return`${r.name} (${THEMES[r.theme]?.label||r.theme}) | Manager score: ${mgrSc!==null?mgrSc+'/10':'Not evaluated'} | Status: ${mgrStatus(r)}`;}).join('\n\n');
+  alert(`To: ${email}\nSubject: HPM PMO Internship Assessment Results\n\n${summary}`);
+}
+
+function downloadCSV(){
+  const{url}=getSBConfig();
+  // get results from whichever source we loaded
+  const cards=document.getElementById('hr-cards');
+  if(!cards.children.length){alert('No results to download yet.');return;}
+  // We re-parse from rendered HR body which is expensive; simpler to re-load
+  alert('To download CSV, please use the Supabase dashboard directly (Table Editor → pm_assessments → Export) for the most reliable export, or use the Email button to get an AI-written summary.');
+}
+
+// ══ CANDIDATE LOGIN & MANAGEMENT ══════════════════════════
+
+let loggedInCandidate = null; // {candidate_id, full_name}
+
+async function candidateLogin(){
+  const cid = sanitise(document.getElementById('login-id').value.trim(),50);
+  const pwd = sanitise(document.getElementById('login-pwd').value.trim(),100);
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  if(!checkRateLimit('candidate_'+cid.substring(0,20))){ errEl.style.display='block'; errEl.textContent='Too many login attempts. Please wait 15 minutes.'; return; }
+  if(!cid || !pwd){ errEl.style.display='block'; errEl.textContent='Please enter both Candidate ID and password.'; return; }
+  try{
+    const data = await callFunction('candidate-login', {candidate_id: cid, password: pwd});
+    loggedInCandidate = {candidate_id: data.candidate_id, full_name: data.full_name};
+    launchAssessment();
+  }catch(e){
+    errEl.style.display='block';
+    if(e.message==='ALREADY_SUBMITTED'){
+      errEl.textContent='You already submitted your test. TA will give you the feedback as soon as possible!';
+    } else if(e.message==='ACCOUNT_INACTIVE'){
+      errEl.textContent='Your access has been deactivated. Please contact TA for more information.';
+    } else {
+      errEl.textContent='Please confirm that you are using the right Candidate ID and the password that you received from TA.';
+    }
+  }
+}
+
+function launchAssessment(){
+  S.name = loggedInCandidate.full_name;
+  S.candidateId = loggedInCandidate.candidate_id;
+  document.getElementById('logged-in-badge').textContent = 'Logged in as ' + loggedInCandidate.candidate_id;
+  show('screen-welcome');
+  // Build theme grid if not yet built
+  buildThemeGrid();
+}
+
+function toggleAddCandidate(){
+  const f = document.getElementById('add-candidate-form');
+  const isOpen = f.style.display === 'block';
+  f.style.display = isOpen ? 'none' : 'block';
+  if(!isOpen){
+    // Auto-generate next ID
+    generateNextCandidateId();
+  }
+}
+
+async function generateNextCandidateId(){
+  let nextNum = 1;
+  const {url, key} = getSBConfig();
+  if(url && key){
+    try{
+      const resp = await callFunction('hr-api',{action:'list_candidates'});
+      const rows = (resp.candidates||[]).slice(0,1);
+      if(rows.length) rows[0].candidate_id = rows[0].candidate_id;
+      if(rows && rows.length){
+        const last = rows[0].candidate_id;
+        const match = last.match(/(\d+)$/);
+        if(match) nextNum = parseInt(match[1]) + 1;
+      }
+    }catch(e){}
+  } else {
+    const local = JSON.parse(localStorage.getItem('pm_candidates')||'[]');
+    if(local.length) nextNum = local.length + 1;
+  }
+  const now = new Date();
+  const yy = String(now.getFullYear()).slice(2);
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const dd = String(now.getDate()).padStart(2,'0');
+  document.getElementById('new-cand-id').value = `HPM-${yy}${mm}${dd}-${String(nextNum).padStart(3,'0')}`;
+}
+
+// Auto-fill ID when name is typed
+document.addEventListener('DOMContentLoaded', () => {
+  const nameInput = document.getElementById('new-cand-name');
+  if(nameInput){
+    nameInput.addEventListener('input', () => {
+      // only update if user hasn't manually edited the ID
+      if(!nameInput._idEdited) generateNextCandidateId();
+    });
+  }
+  const idInput = document.getElementById('new-cand-id');
+  if(idInput) idInput.addEventListener('input', () => { idInput._idEdited = true; });
+});
+
+async function addCandidate(){
+  const name = document.getElementById('new-cand-name').value.trim();
+  const cid = document.getElementById('new-cand-id').value.trim();
+  const st = document.getElementById('add-cand-status');
+  if(!name || !cid){ st.textContent = 'Please fill in both fields.'; return; }
+  st.textContent = 'Saving...';
+  const record = { candidate_id: cid, full_name: name, password: cid, status: 'pending', created_at: new Date().toISOString() };
+  const {url, key} = getSBConfig();
+  if(url && key){
+    try{
+      await callFunction('hr-api',{action:'add_candidate',candidate_id:cid,full_name:name});
+      st.textContent = '✓ Saved to database!';
+      st.style.color='var(--green)';
+      setTimeout(()=>{
+        document.getElementById('add-candidate-form').style.display='none';
+        st.textContent=''; st.style.color='';
+        document.getElementById('new-cand-name').value='';
+        document.getElementById('new-cand-id').value='';
+        document.getElementById('new-cand-id')._idEdited=false;
+        loadCandidatesList();
+      }, 1200);
+    }catch(e){
+      const msg = e.message||String(e);
+      st.textContent = '✗ Database error: '+msg.substring(0,120)+' — check Supabase policies.';
+      st.style.color='var(--red)';
+      saveLocalCandidate(record);
+      console.error('addCandidate Supabase error:', msg);
+      // Still refresh list to show local save
+      setTimeout(()=>loadCandidatesList(), 500);
+    }
+  } else {
+    saveLocalCandidate(record);
+    st.textContent = '⚠ Saved locally only — database not configured (connect via Manager access).';
+    st.style.color='var(--amber)';
+    setTimeout(()=>{
+      document.getElementById('add-candidate-form').style.display='none';
+      st.textContent=''; st.style.color='';
+      document.getElementById('new-cand-name').value='';
+      document.getElementById('new-cand-id').value='';
+      document.getElementById('new-cand-id')._idEdited=false;
+      loadCandidatesList();
+    }, 3000);
+  }
+}
+
+function saveLocalCandidate(record){
+  const all = JSON.parse(localStorage.getItem('pm_candidates')||'[]');
+  all.push(record);
+  localStorage.setItem('pm_candidates', JSON.stringify(all));
+}
+
+async function loadCandidatesList(){
+  const el = document.getElementById('candidates-list');
+  if(!el) return;
+  let candidates = [];
+  const {url, key} = getSBConfig();
+  if(url && key){
+    try{
+      const resp2=await callFunction('hr-api',{action:'list_candidates'});
+      candidates=resp2.candidates||[];
+    }catch(e){
+      console.error('loadCandidatesList error:',e.message);
+      const clErr=document.getElementById('hr-conn-status');
+      if(clErr){clErr.textContent='✗ Error loading candidates: '+e.message.substring(0,80);clErr.style.color='var(--red)';}
+      candidates = JSON.parse(localStorage.getItem('pm_candidates')||'[]');
+    }
+  } else {
+    candidates = JSON.parse(localStorage.getItem('pm_candidates')||'[]');
+  }
+  if(!candidates.length){ el.innerHTML='<p style="font-size:13px;color:var(--text3);font-style:italic;">No candidates registered yet.</p>'; return; }
+  el.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+    <thead><tr>
+      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Name</th>
+      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Candidate ID</th>
+      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Password</th>
+      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Status</th>
+    </tr></thead>
+    <tbody>${candidates.map(c=>{
+      const statusCls = c.status==='completed' ? 'color:var(--green);' : c.status==='inactive' ? 'color:var(--red);' : 'color:var(--amber);';
+      return `<tr>
+        <td style="padding:7px 10px;border-bottom:1px solid var(--border);">${h(c.full_name)}</td>
+        <td style="padding:7px 10px;border-bottom:1px solid var(--border);font-family:monospace;">${h(c.candidate_id)}</td>
+        <td style="padding:7px 10px;border-bottom:1px solid var(--border);font-family:monospace;">${h(c.password)}</td>
+        <td style="padding:7px 10px;border-bottom:1px solid var(--border);font-weight:600;${statusCls}">${c.status==='completed'?'Completed':c.status==='inactive'?'Inactive':'Pending'}</td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+async function markCandidateCompleted(candidateId){
+  // Server-side: submit-assessment edge function marks completed automatically.
+  // This is a no-op kept for compatibility.
+  console.log('markCandidateCompleted: handled server-side by submit-assessment');
+}
+
+
+// ══ MANAGER ════════════════════════════════════════════════
+async function requireManagerPassword(){
+  const pwd=prompt('Enter Manager password:');
+  if(pwd===null)return;
+  const ok=await verifyAccessPassword('manager',pwd);
+  if(ok){
+    show('screen-manager');
+    setTimeout(loadManagerDashboard,100);
+  } else {
+    alert('Incorrect password.');
+  }
+}
+
+let allManagerResults=[];
+
+async function loadManagerDashboard(){
+  const{url,key}=getSBConfig();
+  let results=[];
+  if(url&&key){
+    try{
+      const resp=await callFunction('manager-api',{action:'list_assessments'});
+      const rows=resp.assessments||[];
+      results=rows.map(r=>({
+        name:r.candidate_name,theme:r.theme,timestamp:r.timestamp,
+        candidateId:r.candidate_id||'',
+        stepTimes:typeof r.step_times==='object'?r.step_times:tryParse(r.step_times,{}),
+        totalTime:r.total_time,
+        tasks:Array.isArray(r.tasks)?r.tasks:tryParse(r.tasks,[]),
+        planNotes:r.plan_notes,
+        planChangeSummary:Array.isArray(r.plan_changes)?r.plan_changes:tryParse(r.plan_changes,[]),
+        estTimeline:r.est_timeline,estCost:r.est_cost,estResources:r.est_resources,
+        risksText:r.risks_text,mitText:r.mit_text,
+        issueAction:r.issue_action,issueWhy:r.issue_why,
+        managerScores:typeof r.manager_scores==='object'?r.manager_scores:tryParse(r.manager_scores||'null',null),
+        managerComment:r.manager_comment||'',
+        dbId:r.id||null
+      }));
+    }catch(e){results=getLocalResults();}
+  } else {results=getLocalResults();}
+  allManagerResults=results;
+  renderManagerDashboard(results);
+}
+
+function renderManagerDashboard(results){
+  const cards=document.getElementById('manager-cards');
+  if(!cards)return;
+  // Metrics
+  const evaluated=results.filter(r=>mgrAvgScore(r)!==null);
+  const avg=evaluated.length?Math.round(evaluated.reduce((a,r)=>a+mgrAvgScore(r),0)/evaluated.length*10)/10:0;
+  const strong=evaluated.filter(r=>mgrAvgScore(r)>=8).length;
+  let metricsEl=document.getElementById('manager-metrics');
+  if(!metricsEl){
+    metricsEl=document.createElement('div');metricsEl.id='manager-metrics';metricsEl.className='metrics';
+    cards.parentNode.insertBefore(metricsEl,cards);
+  }
+  metricsEl.innerHTML=`
+    <div class="metric"><div class="metric-val">${results.length}</div><div class="metric-lbl">Candidates</div></div>
+    <div class="metric"><div class="metric-val">${evaluated.length?avg+'/10':'—'}</div><div class="metric-lbl">Avg score</div></div>
+    <div class="metric"><div class="metric-val">${strong}</div><div class="metric-lbl">Strong hires (≥8)</div></div>`;
+  cards.innerHTML='';
+  if(!results.length){
+    cards.innerHTML='<div class="card" style="text-align:center;color:var(--text2);padding:2rem;">No assessments submitted yet.</div>';
+    return;
+  }
+  const fmtT=s=>{if(!s)return'—';return Math.floor(s/60)+'m'+(s%60>0?' '+s%60+'s':'');};
+  [...results].sort((a,b)=>(mgrAvgScore(b)||0)-(mgrAvgScore(a)||0)).forEach((r,idx)=>{
+    const ms=r.managerScores;
+    const mgrSc=mgrAvgScore(r);
+    const mgrScored=mgrSc!==null;
+    const mgrCls=mgrSc>=8?'pill-high':mgrSc>=6?'pill-mid':mgrSc>0?'pill-low':'pill-none';
+    const date=new Date(r.timestamp).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    const tname=THEMES[r.theme]?.label||r.theme||'—';
+    const stepScores=mgrScored?`
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+        ${['step1','step2','step3','step4'].map((s,i)=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;text-align:center;">
+          <div style="font-size:14px;font-weight:500;">${ms[s]}/10</div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;">Step ${i+1}</div>
+        </div>`).join('')}
+      </div>`:'';
+    const card=document.createElement('div');card.className='hr-card';
+    card.innerHTML=`<div class="hr-card-head" style="cursor:default;">
+      <div style="flex:1;">
+        <p style="font-size:15px;font-weight:500;margin-bottom:3px;">${h(r.name)}
+          <span class="time-badge">${fmtT(r.totalTime)}</span>
+        </p>
+        <p style="font-size:12px;color:var(--text3);">${date} · ${h(tname)}${r.candidateId?' · '+h(r.candidateId):''}</p>
+        ${stepScores}
+        ${ms?.comment||r.managerComment?`<p style="font-size:12px;color:var(--text2);margin-top:8px;font-style:italic;">"${h((ms?.comment||r.managerComment||'').substring(0,120))}${(ms?.comment||r.managerComment||'').length>120?'…':''}"</p>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;margin-left:12px;">
+        ${mgrScored?`<span class="pill ${mgrCls}">Mgr: ${mgrSc}/10</span>`:`<span class="pill pill-none">Not scored</span>`}
+        <span class="pill ${aiCls}" style="font-size:11px;">${aiSc>0?'AI: '+aiSc+'/10':'No AI'}</span>
+        <button class="btn-small" onclick="openManagerReview(allManagerResults[${idx}],${idx})" style="margin-top:4px;">${mgrScored?'Edit scores →':'Review & score →'}</button>
+      </div>
+    </div>`;
+    cards.appendChild(card);
+  });
+}
+
+function openManagerReview(r,idx){
+  const ms=r.managerScores||{step1:null,step2:null,step3:null,step4:null};
+  const fmtT=s=>{if(!s)return'—';return Math.floor(s/60)+'m'+(s%60>0?' '+s%60+'s':'');};
+  const date=new Date(r.timestamp).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  const tname=THEMES[r.theme]?.label||r.theme||'—';
+  document.getElementById('mgr-review-title').textContent=r.name;
+
+  const scoreInput=(step,label,val)=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:14px;font-weight:500;">${label}</span>
+      <div style="display:flex;gap:6px;align-items:center;">
+        ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button id="score-${step}-${n}-${idx}"
+          onclick="setScore('${step}',${n},${idx})"
+          style="width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:${val===n?'var(--text)':'transparent'};color:${val===n?'var(--bg)':'var(--text)'};font-size:12px;font-family:inherit;cursor:pointer;transition:all .12s;"
+          >${n}</button>`).join('')}
+      </div>
+    </div>`;
+
+  // Render plan changes
+  const changes=Array.isArray(r.planChangeSummary)&&r.planChangeSummary.length?r.planChangeSummary:null;
+  const changeSec=changes?changes.map(c=>{
+    const tag=c.startsWith('Added')?'tag-added':c.startsWith('Deleted')?'tag-deleted':'tag-changed';
+    const type=c.startsWith('Added')?'ADDED':c.startsWith('Deleted')?'DELETED':'EDITED';
+    return`<div style="display:flex;align-items:baseline;gap:8px;font-size:13px;margin-bottom:4px;"><span class="task-tag ${tag}">${type}</span><span style="color:var(--text2);">${h(c.replace(/^(Added|Deleted|Changed):\s*/,''))}</span></div>`;
+  }).join(''):'<p style="font-size:13px;color:var(--text3);font-style:italic;">No changes.</p>';
+
+  const activeTasks=(r.tasks||[]).filter(t=>t._status!=='deleted');
+  const taskRows=activeTasks.map(t=>{
+    const badge=t._status==='added'?'<span class="task-tag tag-added">NEW</span>':t._status==='changed'?'<span class="task-tag tag-changed">EDITED</span>':'';
+    return`<tr><td>${h(t.name)}${badge?' '+badge:''}</td><td>${h(t.dur)}</td><td>${h(t.who)}</td><td>${h(t.dep)}</td></tr>`;
+  }).join('');
+
+  const st=r.stepTimes||{};
+  const timeRow=['plan','estimate','risks','issue'].map(k=>`<span style="margin-right:14px;"><strong>${{plan:'Plan',estimate:'Estimates',risks:'Risks',issue:'Issue'}[k]}:</strong> ${fmtT(st[k])}</span>`).join('');
+
+  document.getElementById('mgr-review-body').innerHTML=`
+    <div class="review-block" style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;">
+      <div>
+        <p style="font-size:18px;font-weight:500;margin-bottom:4px;">${h(r.name)}</p>
+        <p style="font-size:13px;color:var(--text3);">${date} · ${h(tname)}${r.candidateId?' · '+h(r.candidateId):''}</p>
+        <div style="margin-top:8px;font-size:12px;color:var(--text2);">${timeRow}</div>
+      </div>
+      <div style="text-align:right;">
+
+      </div>
+    </div>
+
+
+
+    <div class="review-section">
+      <h3>Project plan</h3>
+      <div class="review-block">
+        <table class="task-tbl"><thead><tr><th>Task</th><th>Duration</th><th>Owner</th><th>Depends on</th></tr></thead>
+        <tbody>${taskRows}</tbody></table>
+        ${r.planNotes?`<p style="font-size:12px;color:var(--text3);margin-top:8px;">${h(r.planNotes)}</p>`:''}
+      </div>
+      <div class="review-block"><div class="review-q">Plan changes</div>${changeSec}</div>
+    </div>
+
+    <div class="review-section">
+      <h3>Estimates</h3>
+      <div class="review-block"><div class="review-q">Timeline</div><div class="review-a">${h(r.estTimeline||'—')}</div></div>
+      <div class="review-block"><div class="review-q">Cost</div><div class="review-a">${h(r.estCost||'—')}</div></div>
+      <div class="review-block"><div class="review-q">Resources</div><div class="review-a">${h(r.estResources||'—')}</div></div>
+    </div>
+
+    <div class="review-section">
+      <h3>Risks & mitigation</h3>
+      <div class="review-block"><div class="review-q">Risks foreseen</div><div class="review-a">${h(r.risksText||'—')}</div></div>
+      <div class="review-block"><div class="review-q">Prevention strategies</div><div class="review-a">${h(r.mitText||'—')}</div></div>
+    </div>
+
+    <div class="review-section">
+      <h3>Issue response</h3>
+      <div class="review-block"><div class="review-q">Immediate actions</div><div class="review-a">${h(r.issueAction||'—')}</div></div>
+      <div class="review-block"><div class="review-q">Reasoning</div><div class="review-a">${h(r.issueWhy||'—')}</div></div>
+    </div>
+
+    <!-- Manager scoring -->
+    <div class="review-section">
+      <h3>Manager scoring</h3>
+      <div class="review-block">
+        ${scoreInput('step1','Step 1 — Project plan',ms.step1)}
+        ${scoreInput('step2','Step 2 — Estimates',ms.step2)}
+        ${scoreInput('step3','Step 3 — Risks & mitigation',ms.step3)}
+        ${scoreInput('step4','Step 4 — Issue response',ms.step4)}
+        <div style="margin-top:1rem;">
+          <span class="lbl">Manager comment</span>
+          <textarea id="mgr-comment-${idx}" placeholder="Overall impression, specific observations, hiring recommendation..." style="min-height:100px;margin-top:6px;">${h(r.managerComment||'')}</textarea>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:12px;">
+          <button class="btn btn-primary" onclick="saveManagerScores(${idx})">Save scores</button>
+          <span id="mgr-save-status-${idx}" style="font-size:12px;color:var(--text3);"></span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-full" onclick="backToManager()" style="margin-top:.5rem;">← Back to all candidates</button>
+  `;
+
+  // Store current idx for score buttons
+  document.getElementById('mgr-review-body')._candidateIdx=idx;
+  show('screen-manager-review');
+  window.scrollTo(0,0);
+}
+
+let pendingScores={};
+function setScore(step,val,idx){
+  if(!pendingScores[idx])pendingScores[idx]={};
+  pendingScores[idx][step]=val;
+  // Update button visuals
+  [1,2,3,4,5,6,7,8,9,10].forEach(n=>{
+    const btn=document.getElementById(`score-${step}-${n}-${idx}`);
+    if(btn){
+      btn.style.background=n===val?'var(--text)':'transparent';
+      btn.style.color=n===val?'var(--bg)':'var(--text)';
+    }
+  });
+}
+
+async function saveManagerScores(idx){
+  const r=allManagerResults[idx];
+  const ps=pendingScores[idx]||{};
+  const existing=r.managerScores||{};
+  const scores={
+    step1:ps.step1??existing.step1??null,
+    step2:ps.step2??existing.step2??null,
+    step3:ps.step3??existing.step3??null,
+    step4:ps.step4??existing.step4??null,
+  };
+  const comment=document.getElementById(`mgr-comment-${idx}`)?.value||'';
+  const st=document.getElementById(`mgr-save-status-${idx}`);
+  if(Object.values(scores).some(v=>v===null)){
+    if(st)st.textContent='Please score all 4 steps before saving.';
+    return;
+  }
+  if(st)st.textContent='Saving...';
+  const{url,key}=getSBConfig();
+  let saved=false;
+  if(url&&key&&r.dbId){
+    try{
+      await callFunction('manager-api',{
+        action:'save_scores',
+        assessment_id:r.dbId,
+        manager_scores:scores,
+        manager_comment:comment
+      });
+      saved=true;
+    }catch(e){
+      console.warn('Supabase PATCH failed:',e);
+      if(st)st.textContent='DB error: '+e.message.substring(0,80);
+    }
+  }
+  // also update local
+  r.managerScores=scores;r.managerComment=comment;
+  allManagerResults[idx]=r;
+  const local=JSON.parse(localStorage.getItem('pm_local_results')||'[]');
+  const li=local.findIndex(x=>x.timestamp===r.timestamp&&x.name===r.name);
+  if(li>=0){local[li].managerScores=scores;local[li].managerComment=comment;localStorage.setItem('pm_local_results',JSON.stringify(local));}
+  if(st)st.textContent=saved?'Saved to database!':'Saved locally.';
+  setTimeout(()=>{if(st)st.textContent='';},3000);
+}
+
+function backToManager(){
+  show('screen-manager');
+  window.scrollTo(0,0);
+}
+
+// ══ INACTIVATE ALL CANDIDATES ══════════════════════════════
+async function inactivateAllCandidates(){
+  if(!confirm('This will set all candidates to inactive. They will not be able to log in until re-activated. Continue?'))return;
+  try{
+    await callFunction('hr-api',{action:'inactivate_all'});
+    alert('All candidates have been inactivated. You can now start a new process.');
+  }catch(e){
+    alert('Error: '+e.message);
+  }
+  loadCandidatesList();
+}
+
+
+// ══ SECURITY ═══════════════════════════════════════════════
+
+// Rate limiter — max 5 attempts per 15 minutes per role
+const _loginAttempts={};
+function checkRateLimit(role){
+  const now=Date.now();
+  const key='hpm_rl_'+role;
+  let data=JSON.parse(sessionStorage.getItem(key)||'{"count":0,"since":0}');
+  if(now-data.since>15*60*1000){data={count:0,since:now};}
+  data.count++;
+  sessionStorage.setItem(key,JSON.stringify(data));
+  return data.count<=5;
+}
+
+// SHA-256 hash using Web Crypto API
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+// Verify password against Supabase hpm_access table, fallback to local hash
+async function verifyAccessPassword(role,pwd){
+  if(!checkRateLimit(role)){
+    alert('Too many attempts. Please wait 15 minutes before trying again.');
+    return false;
+  }
+  const pwdHash=await sha256(pwd);
+  // Verify via edge function (server holds real hash)
+  // For HR role, we call hr-api with action:'verify' using the hash as token
+  // For manager role, same via manager-api
+  try{
+    const fnName = role==='hr'?'hr-api':'manager-api';
+    setSessionToken(role, pwd);
+    await callFunction(fnName,{action:'verify'});
+    return true; // if function returned without error, token is valid
+  }catch(e){
+    setSessionToken('','');
+    // fall through to local hash check
+  }
+  // Local fallback hashes (sha256 of 'hr1234' and 'mng1234')
+  const LOCAL_HASHES={
+    hr:'bcb70742aad2b11dddb9cc1708e1b918199f8484f3d4f30aeece88d140cfd04a',
+    manager:'df45e38df981dae2bf8537b344907145d2cc204fd26911a4ac9e6221817f70c4'
+  };
+  return LOCAL_HASHES[role]===pwdHash;
+}
+
+// Sanitise all user input — strip HTML tags and limit length
+function sanitise(str,maxLen=5000){
+  if(typeof str!=='string')return'';
+  return str.replace(/<[^>]*>/g,'').replace(/[<>]/g,'').substring(0,maxLen).trim();
+}
+
+// Override h() to be more thorough
+function h(s){
+  if(s===null||s===undefined)return'';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#x27;')
+    .replace(/\//g,'&#x2F;')
+    .replace(/`/g,'&#x60;');
+}
+
+// Sanitise all text fields before saving
+function sanitiseRecord(record){
+  const fields=['name','planNotes','estTimeline','estCost','estResources','risksText','mitText','issueAction','issueWhy'];
+  const clean={...record};
+  fields.forEach(f=>{if(clean[f])clean[f]=sanitise(clean[f]);});
+  if(clean.tasks)clean.tasks=clean.tasks.map(t=>({
+    ...t,
+    name:sanitise(t.name,200),
+    dur:sanitise(t.dur,100),
+    who:sanitise(t.who,200),
+    dep:sanitise(t.dep,200)
+  }));
+  return clean;
+}
+
+// Session timeout — 60 minutes of inactivity
+let _sessionTimer=null;
+function resetSessionTimer(){
+  clearTimeout(_sessionTimer);
+  _sessionTimer=setTimeout(()=>{
+    show('screen-login');
+    sessionStorage.clear();
+    alert('Your session has expired due to inactivity. Please log in again.');
+  },60*60*1000);
+}
+document.addEventListener('click',resetSessionTimer);
+document.addEventListener('keydown',resetSessionTimer);
+
+async function requireHRPassword(){
+  const pwd=prompt('Enter HR password to access the dashboard:');
+  if(pwd===null)return;
+  const ok=await verifyAccessPassword('hr',pwd);
+  if(ok){
+    show('screen-hr');
+    setTimeout(()=>{loadHRData();loadCandidatesList();},100);
+  } else {
+    alert('Incorrect password.');
+  }
+}
+
+// ══ INIT ══════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  // Pre-fill Supabase config if saved
+  const cfg=getSBConfig();
+  if(document.getElementById('sb-url')){
+    document.getElementById('sb-url').value=cfg.url;
+    document.getElementById('sb-key').value=cfg.key?'(configured)':'';
+  }
+
+  // Theme grid built after login
+  buildThemeGrid();
+});
+function buildThemeGrid(){
+  const grid=document.getElementById('theme-grid');
+  if(!grid||grid.children.length>0)return; // already built
+  Object.values(THEMES).forEach(t=>{
+    const btn=document.createElement('button');
+    btn.className='btn';btn.id='tbtn-'+t.id;
+    btn.style.cssText='text-align:left;padding:10px 14px;font-size:13px;';
+    btn.innerHTML=`<strong style="display:block;margin-bottom:2px;">${t.label}</strong>`;
+    btn.onclick=()=>{
+      currentTheme=t;
+      document.querySelectorAll('[id^=tbtn-]').forEach(b=>{b.style.background='';b.style.borderColor='';});
+      btn.style.background='var(--blue-bg)';btn.style.borderColor='var(--blue-border)';
+    };
+    if(t.id==='app'){btn.style.background='var(--blue-bg)';btn.style.borderColor='var(--blue-border)';}
+    grid.appendChild(btn);
+  });
+
+  // If HR screen loaded directly, auto-load data
+}
+if(window.location.hash==='#hr'){show('screen-hr');loadHRData();loadCandidatesList();}
+
+
+</script>
+</body>
+</html>
