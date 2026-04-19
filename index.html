@@ -691,6 +691,22 @@ function buildTimeSummary(){
 
 
 
+// ══ CONFIGURATION ════════════════════════════════════════════════════
+// Set your Supabase project URL only — no keys needed in the browser.
+// All sensitive operations go through Edge Functions on the server.
+const FUNCTIONS_URL = 'https://ipuouhsbkknuhgafdgms.supabase.co/functions/v1';
+// ══════════════════════════════════════════════════════════════════════
+
+const SB_URL_KEY='hpm_sb_url',SB_KEY_KEY='hpm_sb_key';
+function getSBConfig(){
+  const url=localStorage.getItem(SB_URL_KEY)||'';
+  const key=localStorage.getItem(SB_KEY_KEY)||'';
+  return{url,key};
+}
+function getFunctionsUrl(){
+  return localStorage.getItem('hpm_fn_url')||FUNCTIONS_URL;
+}
+
 // ══ EDGE FUNCTION CALLS ════════════════════════════════════════════
 // All sensitive DB operations go through Edge Functions.
 // The browser never holds the service role key.
@@ -731,23 +747,7 @@ async function callFunction(fnName, body={}, role=''){
   return data;
 }
 
-// ══ SUPABASE ══════════════════════════════════════════════
-// ══ CONFIGURATION ════════════════════════════════════════════════════
-// Set your Supabase project URL only — no keys needed in the browser.
-// All sensitive operations go through Edge Functions on the server.
-const FUNCTIONS_URL = 'https://ipuouhsbkknuhgafdgms.supabase.co/functions/v1';
-// ══════════════════════════════════════════════════════════════════════
-
-const SB_URL_KEY='hpm_sb_url',SB_KEY_KEY='hpm_sb_key';
-function getSBConfig(){
-  // Still used for legacy direct calls during transition
-  const url=localStorage.getItem(SB_URL_KEY)||'';
-  const key=localStorage.getItem(SB_KEY_KEY)||'';
-  return{url,key};
-}
-function getFunctionsUrl(){
-  return localStorage.getItem('hpm_fn_url')||FUNCTIONS_URL;
-}
+// ══ SUPABASE (config moved above) ═══════════════════════
 function saveSupabaseConfig(){
   const url=document.getElementById('sb-url').value.trim();
   const key=document.getElementById('sb-key').value.trim();
